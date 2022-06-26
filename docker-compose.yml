@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: service.dockerfile
-    command: [ "./start-odk.sh" ]
+    command: [ "pm2-runtime", "./pm2.config.js" ]
     restart: always
     logging:
       driver: json-file
