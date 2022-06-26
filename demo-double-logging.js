@@ -20,8 +20,15 @@ console.log(`
 let i = 0;
 
 const printRandom = () => {
-  console.log('[test-logging]', new Date(), Date.now(), ++i, Math.random());
-  console.log('[test-logging]', 'Sleeping for 10 seconds...');
+  ++i;
+
+  const timestamp = new Date().toString();
+  const sinceEpoch = Date.now();
+
+  console.error('[test-logging]', 'console.error()', i, timestamp, sinceEpoch, Math.random());
+  console.log(  '[test-logging]', 'console.log()  ', i, timestamp, sinceEpoch, Math.random());
+  console.log(  '[test-logging]', 'console.log()  ', i, timestamp, sinceEpoch, 'Sleeping for 10 seconds...');
+
   setTimeout(printRandom, 10000);
 };
 
