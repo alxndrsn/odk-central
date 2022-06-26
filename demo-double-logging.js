@@ -1,0 +1,30 @@
+// Copyright 2017 ODK Central Developers
+// See the NOTICE file at the top-level directory of this distribution and at
+// https://github.com/getodk/central-backend/blob/master/NOTICE.
+// This file is part of ODK Central. It is subject to the license terms in
+// the LICENSE file found in the top-level directory of this distribution and at
+// https://www.apache.org/licenses/LICENSE-2.0. No part of ODK Central,
+// including this file, may be copied, modified, propagated, or distributed
+// except according to the terms contained in the LICENSE file.
+//
+// This is the main entrypoint for the actual HTTP server. It sets up the
+// dependency container and feeds it to the service infrastructure.
+console.log(`
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ ${new Date()} ${Date.now()}
+@ HELLO!!!!!!!!!!!!!!!!
+@ ${new Date()} ${Date.now()}
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+`);
+
+let i = 0;
+
+const printRandom = () => {
+  console.log('[test-logging]', new Date(), Date.now(), ++i, Math.random());
+  console.log('[test-logging]', 'Sleeping for 10 seconds...');
+  setTimeout(printRandom, 10000);
+};
+
+printRandom();
+
+return;

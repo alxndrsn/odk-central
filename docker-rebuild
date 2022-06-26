@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+docker-compose stop service
+docker-compose rm --force service
+docker-compose build service
+docker-compose create service
+docker-compose start service
+./docker-logs

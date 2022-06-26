@@ -1,0 +1,2 @@
+#!/bin/bash -eu
+docker-compose logs --tail all service
