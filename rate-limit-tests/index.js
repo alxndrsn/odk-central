@@ -60,7 +60,10 @@ async function runTests() {
     log.info('Setup complete.  Starting tests...');
 
     let pass = true;
+
     pass &= await test('version.txt', { Authorization:false }, 100, 100);
+    // TODO wait for any bans to fade
+    // TODO run other tests, e.g. GETting with basic auth, GETting with a session token
 
     log.info('Complete.');
 
@@ -79,7 +82,7 @@ async function test(path, headers, expectedSuccess_min, expectedSuccess_max) {
   log.debug('Statuses:', JSON.stringify(statuses));
 
   const successCount     = statuses.filter(s => s === 200).length;
-  const rateLimitedCount = statuses.filter(s => s === 527).length; // TODO double-check status code
+  const rateLimitedCount = statuses.filter(s => s === 527).length; // TODO double-check status code // TODO this may not be what banning looks like with fail2ban - be prepared to change it
   const successPercent = successCount; // currently doing 100 requests, so no calculation required
 
   const failed = false ||
