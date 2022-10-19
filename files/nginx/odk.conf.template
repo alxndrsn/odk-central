@@ -57,6 +57,12 @@ server {
       include /usr/share/nginx/common-headers.nginx.conf;
       add_header Cache-Control no-cache;
     }
+    location /always_200 {
+      return 200 "Karibu!";
+    }
+    location /always_401 {
+      return 401 "You shall not pass!";
+    }
   }
 }
 

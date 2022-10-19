@@ -13,7 +13,7 @@ EXPOSE 443
 VOLUME [ "/etc/dh", "/etc/selfsign", "/etc/nginx/conf.d" ]
 ENTRYPOINT [ "/bin/bash", "/scripts/odk-setup.sh" ]
 
-RUN apt-get update; apt-get install -y openssl netcat nginx-extras lua-zlib
+RUN apt-get update; apt-get install -y openssl netcat nginx-extras lua-zlib fail2ban
 
 RUN mkdir -p /etc/selfsign/live/local/
 COPY files/nginx/odk-setup.sh /scripts/
@@ -28,3 +28,10 @@ COPY files/nginx/certbot.conf /usr/share/nginx/
 COPY files/nginx/redirector.conf /usr/share/nginx/
 #COPY --from=intermediate client/dist/ /usr/share/nginx/html/
 #COPY --from=intermediate /tmp/version.txt /usr/share/nginx/html/
+
+RUN sed -e "/^\[nginx-http-auth\]$/a enabled = true" \
+        -e "/^\[sshd\]$/a enabled = false" \
+           /etc/fail2ban/jail.conf > /etc/fail2ban/jail.local
+# Notes / TODO
+# decrease findtime to 1m
+# set up email sending with the credentials already available

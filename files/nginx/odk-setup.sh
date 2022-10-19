@@ -23,6 +23,12 @@ echo "writing a new nginx configuration file.."
 CNAME=$([ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") \
 /bin/bash -c "envsubst '\$SSL_TYPE \$CNAME' < /usr/share/nginx/odk.conf.template > /etc/nginx/conf.d/odk.conf"
 
+echo '---------------------------------'
+echo 'Starting fail2ban service...'
+# TODO would this ideally be done in config?
+service fail2ban start
+echo '---------------------------------'
+
 if [ "$SSL_TYPE" = "letsencrypt" ]
 then
   echo "starting nginx with certbot.."
