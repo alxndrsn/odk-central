@@ -25,7 +25,7 @@ log.report = (...args) => true  && _log('REPORT', ...args);
 const REAL_LOGIN = false; // SET TO TRUE ONCE THE TESTS ARE "working" TO SOME EXTENT AND WE CAN START RUNNING THE FULL docker-compose CONTAINER SUITE
 
 program
-    .option('-s, --server-url <serverUrl>', 'URL of ODK Central server', 'http://localhost:19089')
+    .option('-s, --server-url <serverUrl>', 'URL of ODK Central server', 'http://localhost:19080')
     .option('-u, --user-email <serverUrl>', 'Email of central user', 'x@example.com')
     .option('-P, --user-password <userPassword>', 'Password of central user', 'secret')
     ;
