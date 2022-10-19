@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import fetch, { fileFromSync } from 'node-fetch';
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
+import { spawn } from 'node:child_process';
 import { basename } from 'node:path';
 import { program } from 'commander';
 
@@ -21,8 +22,10 @@ log.info   = log;
 log.error  = (...args) => true  && _log('ERROR',  ...args);
 log.report = (...args) => true  && _log('REPORT', ...args);
 
+const REAL_LOGIN = false; // SET TO TRUE ONCE THE TESTS ARE "working" TO SOME EXTENT AND WE CAN START RUNNING THE FULL docker-compose CONTAINER SUITE
+
 program
-    .option('-s, --server-url <serverUrl>', 'URL of ODK Central server', 'http://localhost:8989')
+    .option('-s, --server-url <serverUrl>', 'URL of ODK Central server', 'http://localhost:19089')
     .option('-u, --user-email <serverUrl>', 'Email of central user', 'x@example.com')
     .option('-P, --user-password <userPassword>', 'Password of central user', 'secret')
     ;
@@ -42,7 +45,7 @@ function processDockerComposeOutput(data) {
 	const out = data.toString().replace(/\n$/, '');
 	log('[docker-compose]', out);
 	if(out.includes('starting nginx without local SSL to allow for upstream SSL..')) {
-		runTests();
+    setTimeout(runTests, 1000); // TODO can prob remove timeout when things are working
 	}
 }
 
@@ -53,12 +56,9 @@ async function test(method, path, headers, expectedSuccess_min, expectedSuccess_
 async function runTests() {
   log.info('Setting up...');
 
-  log.info('Creating log directory:', logPath, '...');
-  fs.mkdirSync(logPath, { recursive:true });
-
-  log.info('Creating session...');
-  const { token } = await apiPostJson('sessions', { email:userEmail, password:userPassword }, { Authorization:null });
-  bearerToken = token;
+//  log.info('Creating session...');
+//  const { token } = await apiPostJson('sessions', { email:userEmail, password:userPassword }, { Authorization:null });
+//  bearerToken = token;
 
 	log.info('Setup complete.  Starting tests...');
 
@@ -67,106 +67,7 @@ async function runTests() {
 
   log.info('Complete.');
 
-  process.exit(0);
-}
-
-function doBenchmark(name, throughput, throughputPeriod, testDuration, minimumSuccessThreshold, fn) {
-  log.info('Starting benchmark:', name);
-  log.info('        throughput:', throughput, 'per period');
-  log.info('  throughputPeriod:', throughputPeriod, 'ms');
-  log.info('      testDuration:', durationForHumans(testDuration));
-  log.info('-------------------------------');
-  return new Promise((resolve, reject) => {
-    try {
-      const successes = [];
-      const sizes = [];
-      const fails = [];
-      const results = [];
-      const sleepyTime = +throughputPeriod / +throughput;
-
-      let iterationCount = 0;
-      let completedIterations = 0;
-      const iterate = async () => {
-        const n = iterationCount++;
-        const started = Date.now();
-        try {
-          const size = await fn(n);
-          const finished = Date.now();
-          const time = finished - started;
-          successes.push(time);
-          sizes.push(size);
-          results[n] = { success:true,  started, finished, time, size };
-        } catch(err) {
-          fails.push(err.message);
-          results[n] = { success:false, started, finished:Date.now(), err:{ message:err.message, stack:err.stack } };
-        } finally {
-          ++completedIterations;
-        }
-      };
-
-      iterate();
-      const timerId = setInterval(iterate, sleepyTime);
-
-      setTimeout(async () => {
-        clearTimeout(timerId);
-
-        const maxDrainDuration = 120_000;
-        await new Promise(resolve => {
-          log.info(`Waiting up to ${durationForHumans(maxDrainDuration)} for test drainage...`);
-          const maxDrainTimeout = Date.now() + maxDrainDuration;
-          const drainPulse = 500;
-
-          checkDrain();
-
-          function checkDrain() {
-            log.debug('Checking drain status...');
-            if(Date.now() > maxDrainTimeout) {
-              log.info('Drain timeout exceeded.');
-              return resolve();
-            } else if(completedIterations >= iterationCount) {
-              log.info('All connections have completed.');
-              return resolve();
-            }
-            log.debug(`Drainage not complete.  Still Waiting for ${iterationCount - results.length} connections.  Sleeping for ${durationForHumans(drainPulse)}...`);
-            setTimeout(checkDrain, drainPulse);
-          }
-        });
-
-        fs.writeFileSync(`${logPath}/${name}.extras.log.json`, JSON.stringify(results, null, 2));
-
-        const successPercent = 100 * successes.length / iterationCount;
-
-        log.report('--------------------------');
-        log.report('              Test:', name);
-        log.report('     Test duration:', testDuration);
-        log.report('    Total requests:', iterationCount);
-        log.report('Success % required:', `${minimumSuccessThreshold}%`);
-        log.report('         Successes:', successes.length, `(${Math.floor(successPercent)}%)`);
-        log.report('        Throughput:', oneDp((1000 * successes.length / testDuration)), 'reqs/s');
-        log.report('          Failures:', fails.length);
-        log.report('    Response times:');
-        log.report('              mean:', durationForHumans(_.mean(successes)));
-        log.report('               min:', _.min(successes), 'ms');
-        log.report('               max:', _.max(successes), 'ms');
-        log.report('    Response sizes:');
-        log.report('               min:', _.min(sizes), 'b');
-        log.report('               max:', _.max(sizes), 'b');
-        if(fails.length) log.report('            Errors:');
-        [ ...new Set(fails) ].map(m => log.report(`              * ${m.replace(/\n/g, '\\n')}`));
-        log.report('--------------------------');
-
-        if(_.min(sizes) !== _.max(sizes)) reportFatalError('VARIATION IN RESPONSE SIZES MAY INDICATE SERIOUS ERRORS SERVER-SIDE');
-
-        if(successPercent < minimumSuccessThreshold) reportFatalError('MINIMUM SUCCESS THRESHOLD WAS NOT MET');
-
-        if(fails.length) reportWarning('REQUEST FAILURES MAY AFFECT SUBSEQUENT BENCHMARKS');
-
-        resolve();
-      }, +testDuration);
-    } catch(err) {
-      reject(err);
-    }
-  });
+  setTimeout(process.exit, 1000); // TODO can prob remove timeout when things are working
 }
 
 function reportFatalError(message) {
