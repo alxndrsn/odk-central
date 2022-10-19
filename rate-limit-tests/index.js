@@ -49,25 +49,57 @@ function processDockerComposeOutput(data) {
 	}
 }
 
-async function test(method, path, headers, expectedSuccess_min, expectedSuccess_max) {
-	return true;
-}
-
 async function runTests() {
   log.info('Setting up...');
 
-//  log.info('Creating session...');
-//  const { token } = await apiPostJson('sessions', { email:userEmail, password:userPassword }, { Authorization:null });
-//  bearerToken = token;
+  try {
+  //  log.info('Creating session...');
+  //  const { token } = await apiPostJson('sessions', { email:userEmail, password:userPassword }, { Authorization:null });
+  //  bearerToken = token;
 
-	log.info('Setup complete.  Starting tests...');
+    log.info('Setup complete.  Starting tests...');
 
-	let pass = true;
-	pass &= await test('get', 'version.txt', {}, 100);
+    let pass = true;
+    pass &= await test('version.txt', { Authorization:false }, 100, 100);
 
-  log.info('Complete.');
+    log.info('Complete.');
 
-  setTimeout(process.exit, 1000); // TODO can prob remove timeout when things are working
+    setTimeout(process.exit, 1000); // TODO can prob remove timeout when things are working
+  } catch(err) {
+    console.log('Fatal error:', err);
+    // TODO process.exit(1);
+  }
+}
+
+async function test(path, headers, expectedSuccess_min, expectedSuccess_max) {
+  const promises = [];
+  for(let i=0; i<100; ++i) promises.push(apiFetch('get', path, undefined, headers));
+  const statuses = await Promise.all(promises);
+
+  const successCount     = statuses.filter(s => s === 200);
+  const rateLimitedCount = statuses.filter(s => s === 527); // TODO double-check status code
+  const successPercent = successCount; // currently doing 100 requests, so no calculation required
+
+  const failed = false ||
+      (successPercent < expectedSuccess_min) ||
+      (successPercent > expectedSuccess_max) ||
+      (successCount + rateLimitedCount !== 100) ||
+      false;
+  const passed = !failed;
+
+  console.log(`
+    ----------------------------
+    TEST REPORT: GET ${path}
+    ----------------------------
+    REQUESTS:     100
+    SUCCESSES:    ${successCount.toString().padStart(3, ' ')}
+    RATE LIMITED: ${rateLimitedCount.toString().padStart(3, ' ')}
+    ---
+    TEST ${passed ? 'PASSED ✅' : 'FAILED ❌'}
+    ----------------------------
+  `);
+
+  return passed;
 }
 
 function reportFatalError(message) {
@@ -129,19 +161,23 @@ async function apiPost(path, body, headers) {
   return res.json();
 }
 
-async function apiFetch(method, path, body, headers) {
+async function apiFetch(method, path, body, extraHeaders) {
   const url = `${serverUrl}/v1/${path}`;
 
-  const Authorization = bearerToken ? `Bearer ${bearerToken}` : `Basic ${base64(`${userEmail}:${userPassword}`)}`;
+  const headers = { ...extraHeaders };
+  if(headers.Authorization === false) {
+    delete headers.Authorization;
+  } else if(headers.Authorization) {
+    // set elsewhere
+  } else if(bearerToken) {
+    headers.Authorization = `Bearer ${bearerToken}`;
+  } else {
+    headers.Authorization = `Basic ${base64(`${userEmail}:${userPassword}`)}`;
+  }
 
-  const res = await fetch(url, {
-    method,
-    body,
-    headers: { Authorization, ...headers },
-  });
+  const res = await fetch(url, { method, body, headers });
   log.debug(method, res.url, '->', res.status);
-  if(!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
-  return res;
+  return res.status;
 }
 
 function base64(s) {
