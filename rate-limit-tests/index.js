@@ -17,7 +17,7 @@ import { program } from 'commander';
 
 const _log = (...args) => console.log(`[${new Date().toISOString()}]`, '[benchmarker]', ...args);
 const log  = (...args) => true  && _log('INFO',   ...args);
-log.debug  = (...args) => false && _log('DEBUG',  ...args);
+log.debug  = (...args) => true  && _log('DEBUG',  ...args);
 log.info   = log;
 log.error  = (...args) => true  && _log('ERROR',  ...args);
 log.report = (...args) => true  && _log('REPORT', ...args);
@@ -43,7 +43,7 @@ log('waiting for start confirmation...');
 
 function processDockerComposeOutput(data) {
 	const out = data.toString().replace(/\n$/, '');
-	log('[docker-compose]', out);
+	log.debug('[docker-compose]', out);
 	if(out.includes('starting nginx without local SSL to allow for upstream SSL..')) {
     setTimeout(runTests, 1000); // TODO can prob remove timeout when things are working
 	}
@@ -76,8 +76,10 @@ async function test(path, headers, expectedSuccess_min, expectedSuccess_max) {
   for(let i=0; i<100; ++i) promises.push(apiFetch('get', path, undefined, headers));
   const statuses = await Promise.all(promises);
 
-  const successCount     = statuses.filter(s => s === 200);
-  const rateLimitedCount = statuses.filter(s => s === 527); // TODO double-check status code
+  log.debug('Statuses:', JSON.stringify(statuses));
+
+  const successCount     = statuses.filter(s => s === 200).length;
+  const rateLimitedCount = statuses.filter(s => s === 527).length; // TODO double-check status code
   const successPercent = successCount; // currently doing 100 requests, so no calculation required
 
   const failed = false ||
@@ -87,16 +89,17 @@ async function test(path, headers, expectedSuccess_min, expectedSuccess_max) {
       false;
   const passed = !failed;
 
+  const divider = ''.padStart(16 + path.length, '-');
   console.log(`
-    ----------------------------
+    ${divider}
     TEST REPORT: GET ${path}
-    ----------------------------
+    ${divider}
     REQUESTS:     100
     SUCCESSES:    ${successCount.toString().padStart(3, ' ')}
     RATE LIMITED: ${rateLimitedCount.toString().padStart(3, ' ')}
-    ---
-    TEST ${passed ? 'PASSED ✅' : 'FAILED ❌'}
-    ----------------------------
+    ${divider}
+    ${passed ? '✅' : '❌'} TEST ${passed ? 'PASSED' : 'FAILED'}
+    ${divider}
   `);
 
   return passed;
@@ -162,7 +165,8 @@ async function apiPost(path, body, headers) {
 }
 
 async function apiFetch(method, path, body, extraHeaders) {
-  const url = `${serverUrl}/v1/${path}`;
+//  const url = `${serverUrl}/v1/${path}`;
+  const url = `${serverUrl}/${path}`; // TODO probably need to re-add v1 here (???)
 
   const headers = { ...extraHeaders };
   if(headers.Authorization === false) {
