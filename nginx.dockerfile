@@ -1,8 +1,8 @@
-#FROM node:16.17.0 as intermediate
-#
-#COPY ./ ./
-#RUN files/prebuild/write-version.sh
-#RUN files/prebuild/build-frontend.sh
+FROM node:16.17.0 as intermediate
+
+COPY ./ ./
+RUN files/prebuild/write-version.sh
+RUN files/prebuild/build-frontend.sh
 
 # make sure you have updated *.conf files when upgrading this
 FROM jonasal/nginx-certbot:2.4.1
@@ -26,5 +26,5 @@ COPY files/nginx/odk.conf.template /usr/share/nginx/
 COPY files/nginx/common-headers.nginx.conf /usr/share/nginx/
 COPY files/nginx/certbot.conf /usr/share/nginx/
 COPY files/nginx/redirector.conf /usr/share/nginx/
-#COPY --from=intermediate client/dist/ /usr/share/nginx/html/
-#COPY --from=intermediate /tmp/version.txt /usr/share/nginx/html/
+COPY --from=intermediate client/dist/ /usr/share/nginx/html/
+COPY --from=intermediate /tmp/version.txt /usr/share/nginx/html/
