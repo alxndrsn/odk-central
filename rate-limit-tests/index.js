@@ -63,6 +63,7 @@ async function runTests() {
 
     pass &= await test('always_200', { Authorization:false }, { expectRateLimit:false });
     // TODO wait for any bans to fade
+    if(!pass) reportFatalError('Previous expectations were not met!');
 
     pass &= await test('always_401', { Authorization:false }, { expectRateLimit:true });
     // TODO wait for any bans to fade
