@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+const { spawn } = require('node:child_process');
+
+const log = (...args) => console.log(new Date(), '[test/rate-limiting]', ...args);
+
+log('Starting nginx docker container...');
+const cp = spawn('docker-compose', ['up', '--build', 'nginx'], { env:{ HTTP_PORT:19080, HTTPS_PORT:19443, DOMAIN:'odk-nginx-test.localhost', SYSADMIN_EMAIL:'sysadmin@example.com', SSL_TYPE:'upstream' } });
+cp.stdout.on('data', processDockerComposeOutput);
+cp.stderr.on('data', processDockerComposeOutput);
+
+log('TODO waiting for start confirmation...');
+
+log('TODO running rate-limit checks...');
+
+log('TODO analysing results...');
+
+log('Completed.');
+
+function processDockerComposeOutput(data) {
+	const out = data.toString().replace(/\n$/, '');
+	log('[docker-compose]', out);
+	if(out === 'TODO some ready condition') {
+		runTests();
+	}
+}
+
+function runTests() {
+	log('Starting tests...');
+}
