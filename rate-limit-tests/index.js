@@ -61,29 +61,36 @@ async function runTests() {
 
     let pass = true;
 
-    pass &= await test('version.txt', { Authorization:false }, 100, 100);
+    pass &= await test('version.txt', { Authorization:false }, { expectRateLimit:false });
+
+    pass &= await test('always_401', { Authorization:false }, { expectRateLimit:true });
     // TODO wait for any bans to fade
     // TODO run other tests, e.g. GETting with basic auth, GETting with a session token
 
     log.info('Complete.');
 
-    setTimeout(process.exit, 1000); // TODO can prob remove timeout when things are working
+    //setTimeout(process.exit, 1000); // TODO can prob remove timeout when things are working // FIXME currently keeping server running to enable testing some things
   } catch(err) {
     console.log('Fatal error:', err);
     // TODO process.exit(1);
   }
 }
 
-async function test(path, headers, expectedSuccess_min, expectedSuccess_max) {
+async function test(path, headers, { expectRateLimit }) {
   const promises = [];
   for(let i=0; i<100; ++i) promises.push(apiFetch('get', path, undefined, headers));
   const statuses = await Promise.all(promises);
 
   log.debug('Statuses:', JSON.stringify(statuses));
 
-  const successCount     = statuses.filter(s => s === 200).length;
+  const unlimitedCode = expectRateLimit ? 401 : 200;
+  const successCount     = statuses.filter(s => s === unlimitedCode).length;
   const rateLimitedCount = statuses.filter(s => s === 527).length; // TODO double-check status code // TODO this may not be what banning looks like with fail2ban - be prepared to change it
   const successPercent = successCount; // currently doing 100 requests, so no calculation required
+  const rateLimitedPercent = rateLimitedCount; // currently doing 100 requests, so no calculation required
+
+  const expectedSuccess_min = expectRateLimit ? 3 : 100;
+  const expectedSuccess_max = expectRateLimit ? 7 : 100;
 
   const failed = false ||
       (successPercent < expectedSuccess_min) ||
@@ -96,10 +103,13 @@ async function test(path, headers, expectedSuccess_min, expectedSuccess_max) {
   console.log(`
     ${divider}
     TEST REPORT: GET ${path}
+      EXPECT RATE LIMITED? ${expectRateLimit ? 'YES' : 'NO'}
     ${divider}
-    REQUESTS:     100
-    SUCCESSES:    ${successCount.toString().padStart(3, ' ')}
-    RATE LIMITED: ${rateLimitedCount.toString().padStart(3, ' ')}
+    REQUESTS:  100
+    SUCCESSES: ${successCount.toString().padStart(3, ' ')}
+    ${divider}
+    EXPECTED LIMITING: ${(100 - (expectedSuccess_max  - expectedSuccess_min)).toString().padStart(3, ' ')}%
+      ACTUAL LIMITING: ${rateLimitedPercent.toString().padStart(3, ' ')}%
     ${divider}
     ${passed ? '✅' : '❌'} TEST ${passed ? 'PASSED' : 'FAILED'}
     ${divider}
