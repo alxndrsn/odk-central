@@ -15,7 +15,7 @@ import { spawn } from 'node:child_process';
 import { basename } from 'node:path';
 import { program } from 'commander';
 
-const _log = (...args) => console.log(`[${new Date().toISOString()}]`, '[benchmarker]', ...args);
+const _log = (...args) => console.log(`[${new Date().toISOString()}]`, '[rate-limit-tester]', ...args);
 const log  = (...args) => true  && _log('INFO',   ...args);
 log.debug  = (...args) => true  && _log('DEBUG',  ...args);
 log.info   = log;
@@ -61,7 +61,8 @@ async function runTests() {
 
     let pass = true;
 
-    pass &= await test('version.txt', { Authorization:false }, { expectRateLimit:false });
+    pass &= await test('always_200', { Authorization:false }, { expectRateLimit:false });
+    // TODO wait for any bans to fade
 
     pass &= await test('always_401', { Authorization:false }, { expectRateLimit:true });
     // TODO wait for any bans to fade
