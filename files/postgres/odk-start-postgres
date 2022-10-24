@@ -1,0 +1,25 @@
+#!/bin/bash -eu
+set -o pipefail
+
+alreadyRunMarkerFile=9.6-to-14-migration-completed-ok
+
+logPrefix="$(basename $0)"
+log() {
+	echo "[$logPrefix] $*"
+}
+
+if [[ -d /var/lib/postgresql/data ]]; then
+  log "Legacy data directory found, moving to new location..."
+	mv /var/lib/postgresql/data /var/lib/postgresql/9.6/
+fi
+
+if ! [[ -f "$alreadyRunMarkerFile" ]]; then # TODO is there a more reliable way to test this?
+  log "Upgrade not run previously, upgrading now..."
+	docker-upgrade --link
+	touch "$alreadyRunMarkerFile"
+fi
+
+log "Starting postgres..."
+# Start as per official postgres docker image
+# See: https://github.com/docker-library/postgres/blob/master/14/bullseye/Dockerfile
+docker-entrypoint.sh postgres

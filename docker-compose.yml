@@ -1,7 +1,9 @@
 version: "3"
 services:
   postgres:
-    image: "postgres:9.6"
+    build:
+      context: .
+      dockerfile: service.dockerfile
     volumes:
       - /var/lib/postgresql/data
     environment:
