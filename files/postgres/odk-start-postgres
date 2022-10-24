@@ -8,15 +8,26 @@ log() {
 	echo "[$logPrefix] $*"
 }
 
-if [[ -d /var/lib/postgresql/data ]]; then
-  log "Legacy data directory found, moving to new location..."
-	mv /var/lib/postgresql/data /var/lib/postgresql/9.6/
-fi
+#log "Checking for legacy data..."
+#if [[ -d /var/lib/postgresql/data ]]; then
+#  log "Legacy data directory found, moving to new location..."
+#	mv /var/lib/postgresql/data /var/lib/postgresql/9.6/
+#else
+#	log "No legacy data found."
+#fi
 
-if ! [[ -f "$alreadyRunMarkerFile" ]]; then # TODO is there a more reliable way to test this?
-  log "Upgrade not run previously, upgrading now..."
-	docker-upgrade --link
-	touch "$alreadyRunMarkerFile"
+log "Checking for existing migration marker file..."
+if [[ -f "$alreadyRunMarkerFile" ]]; then # TODO is there a more reliable way to test this?
+	log "Migration has been run previously."
+else
+	if [[ -f /var/lib/postgresql/data/postgresql ]]; then
+		log "Migration not run previously; migrating now..."
+		docker-upgrade pg_upgrade
+		log "Migration complete."
+		touch "$alreadyRunMarkerFile"
+	else
+		log "No legacy data found."
+	fi
 fi
 
 log "Starting postgres..."

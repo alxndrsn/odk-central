@@ -3,9 +3,11 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: service.dockerfile
+      dockerfile: postgres.dockerfile
     volumes:
       - /var/lib/postgresql/data
+      # TODO here's an opportunity to make this a non-anonymouse volume...
+      - /var/lib/postgresql/14/data
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
