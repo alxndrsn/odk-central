@@ -1,18 +1,27 @@
 version: "3"
 services:
-  postgres:
-    build:
-      context: .
-      dockerfile: postgres.dockerfile
+  postgres-14:
+    image: postgres:14
     volumes:
-      - /var/lib/postgresql/data
-      # TODO here's an opportunity to make this a non-anonymouse volume...
-      - /var/lib/postgresql/14/data
+      - /var/lib/postgresql/14/data:/var/lib/postgresql/14/data
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
       POSTGRES_DATABASE: odk
     restart: always
+  postgres:
+    # This service migrates from postgres 9.6 to 14.
+    # The legacy name must be maintained to allow access to the anonymous volume.
+    build:
+      context: .
+      dockerfile: postgres-migrate.dockerfile
+    volumes:
+      - /var/lib/postgresql/data
+      - /var/lib/postgresql/14/data:/var/lib/postgresql/14/data
+    environment:
+      POSTGRES_USER: odk
+      POSTGRES_PASSWORD: odk
+      POSTGRES_DATABASE: odk
   mail:
     image: "itsissa/namshi-smtp:4.92-8.deb10u6"
     volumes:
@@ -27,7 +36,7 @@ services:
       dockerfile: service.dockerfile
     depends_on:
       - secrets
-      - postgres
+      - postgres-14
       - mail
       - pyxform
       - enketo
@@ -38,7 +47,7 @@ services:
       - DOMAIN=${DOMAIN}
       - HTTPS_PORT=${HTTPS_PORT:-443}
       - SYSADMIN_EMAIL=${SYSADMIN_EMAIL}
-    command: [ "./wait-for-it.sh", "postgres:5432", "--", "./start-odk.sh" ]
+    command: [ "./wait-for-it.sh", "postgres-14:5432", "--", "./start-odk.sh" ]
     restart: always
     logging:
       driver: local
