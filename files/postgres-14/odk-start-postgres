@@ -1,0 +1,17 @@
+#!/bin/bash -eu
+set -o pipefail
+
+alreadyRunMarkerFile=9.6-to-14-migration-completed-ok
+
+logPrefix="$(basename $0)"
+log() {
+	echo "[$logPrefix] $*"
+}
+
+log "Waiting for migration to complete..."
+while ! [[ -f "$alreadyRunMarkerFile" ]]; do sleep 1; done
+log "Migration complete."
+
+log "Starting postgres..."
+# call ENTRYPOINT + CMD from parent Docker image
+docker-entrypoint.sh postgres

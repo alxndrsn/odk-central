@@ -1,0 +1,25 @@
+#!/bin/bash -eu
+set -o pipefail
+
+alreadyRunMarkerFile=9.6-to-14-migration-completed-ok
+
+logPrefix="$(basename $0)"
+log() {
+	echo "[$logPrefix] $*"
+}
+
+log "Checking for existing migration marker file..."
+if [[ -f "$alreadyRunMarkerFile" ]]; then
+	log "Migration has been run previously."
+else
+	if [[ -f /var/lib/postgresql/data/postgresql ]]; then
+		log "Migration not run previously; migrating now..."
+		docker-upgrade pg_upgrade
+		log "Migration complete."
+	else
+		log "No legacy data found."
+	fi
+  touch "$alreadyRunMarkerFile"
+fi
+
+log "Shutting down."
