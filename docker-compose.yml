@@ -3,7 +3,7 @@ services:
   postgres-14:
     image: postgres:14
     volumes:
-      - /var/lib/postgresql/14/data:/var/lib/postgresql/14/data
+      - ./files/postgres-14/data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
@@ -17,7 +17,7 @@ services:
       dockerfile: postgres-migrate.dockerfile
     volumes:
       - /var/lib/postgresql/data
-      - /var/lib/postgresql/14/data:/var/lib/postgresql/14/data
+      - ./files/postgres-14/data:/var/lib/postgresql/14/data
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
