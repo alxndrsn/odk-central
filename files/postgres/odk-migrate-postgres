@@ -5,7 +5,7 @@ alreadyRunMarkerFile=/var/lib/postgresql/14/data/odk-9.6-to-14-migration-complet
 
 logPrefix="$(basename $0)"
 log() {
-	echo "[$logPrefix] $*"
+	echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
 log "Checking for existing migration marker file..."
