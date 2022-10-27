@@ -19,7 +19,8 @@ services:
       - /var/lib/postgresql/data
       - ./files/postgres-14/data:/var/lib/postgresql/14/data
     environment:
-      POSTGRES_USER: odk
+      PGUSER: odk
+      POSTGRES_INITDB_ARGS: -U odk
       POSTGRES_PASSWORD: odk
       POSTGRES_DATABASE: odk
   mail:
