@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: postgres-14.dockerfile
     volumes:
+      # TODO we may need to move this directory _outside_ the docker dir to allow for future docker-compose builds...
       - ./files/postgres-14/data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: odk
@@ -19,6 +20,7 @@ services:
       dockerfile: postgres-migrate.dockerfile
     volumes:
       - /var/lib/postgresql/data
+      # TODO we may need to move this directory _outside_ the docker dir to allow for future docker-compose builds...
       - ./files/postgres-14/data:/var/lib/postgresql/14/data
     environment:
       PGUSER: odk
