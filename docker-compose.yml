@@ -1,7 +1,9 @@
 version: "3"
 services:
   postgres-14:
-    image: postgres:14
+    build:
+      context: .
+      dockerfile: postgres-14.dockerfile
     volumes:
       - ./files/postgres-14/data:/var/lib/postgresql/data
     environment:
