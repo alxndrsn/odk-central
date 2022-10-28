@@ -14,7 +14,7 @@ if [[ -f "$alreadyRunMarkerFile" ]]; then
 else
 	if [[ -f /var/lib/postgresql/data/PG_VERSION ]]; then
 		log "Migration not run previously; migrating now..."
-		docker-upgrade pg_upgrade --link # This option (1) may not work, and (2) sounds dangerous if there's any risk of restarting the old (pg 9.6) instance
+		docker-upgrade pg_upgrade --link # This option (1) may not work, and (2) sounds dangerous if there's any risk of restarting the old (pg 9.6) instance; confirm this will work on all host OSs
 		# see https://github.com/tianon/docker-postgres-upgrade/issues/16,
 		#     https://github.com/tianon/docker-postgres-upgrade/issues/1
 		cp "$PGDATAOLD/pg_hba.conf" "$PGDATANEW/pg_hba.conf"
