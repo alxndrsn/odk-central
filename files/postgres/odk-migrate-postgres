@@ -15,7 +15,9 @@ else
   if [[ -f /var/lib/postgresql/data/PG_VERSION ]]; then
     log "Migration not run previously; migrating now..."
 
-    docker-upgrade pg_upgrade #--link disabled:doesn't work on github actions??? # This option (1) may not work, and (2) sounds dangerous if there's any risk of restarting the old (pg 9.6) instance; confirm this will work on all host OSs
+    # --link should take less disk space, but doesn't work on MacOSX on github actions
+    # TODO work out why and if there is a better way to approach this
+    docker-upgrade pg_upgrade --link || docker-upgrade pg_upgrade
 
     # see https://github.com/tianon/docker-postgres-upgrade/issues/16,
     #     https://github.com/tianon/docker-postgres-upgrade/issues/1
@@ -31,6 +33,11 @@ else
     # As recommended by pg_upgrade:
     log "Regenerating optimizer statistics..."
     /usr/lib/postgresql/14/bin/vacuumdb --all --analyze-in-stages
+
+    # As recommended by pg_upgrade:
+    # TODO we need to document clearly that this is going to happen!
+    log "Deleting old data files..."
+    ./delete_old_cluster.sh
 
     log "Migration complete."
   else
