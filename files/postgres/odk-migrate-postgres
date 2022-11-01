@@ -35,7 +35,7 @@ else
     /usr/lib/postgresql/14/bin/vacuumdb --all --analyze-in-stages
 
     log "Stopping postgres server..."
-    gosu postgres pg_ctl -m smart stop
+    gosu postgres pg_ctl -D /var/lib/postgresql/14/data -m smart stop
 
     # As recommended by pg_upgrade:
     # TODO we need to document clearly that this is going to happen!
