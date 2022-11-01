@@ -37,11 +37,13 @@ else
     log "Stopping postgres server..."
     gosu postgres pg_ctl -D /var/lib/postgresql/14/data -m smart stop
 
-    # As recommended by pg_upgrade:
-    # TODO we need to document clearly that this is going to happen!
-    log "Deleting old data files..."
-    cat ./delete_old_cluster.sh
-    ./delete_old_cluster.sh
+    # pg_upgrade recommends running ./delete_old_cluster.sh, which
+    # just runs `rm -rf '/var/lib/postgresql/data'`.  Doing this here
+    # can fail with "Device or resource busy".  In addition, deleting
+    # the old data may be risky if the migration didn't complete
+    # perfectly.  We can hedge our bets and make life easier by
+    # skipping cleanup here, and providing a docker command to prune
+    # the old, unused volume in the next odk-central version.
 
     log "Migration complete."
   else
