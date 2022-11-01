@@ -40,6 +40,7 @@ else
     # As recommended by pg_upgrade:
     # TODO we need to document clearly that this is going to happen!
     log "Deleting old data files..."
+    cat ./delete_old_cluster.sh
     ./delete_old_cluster.sh
 
     log "Migration complete."
