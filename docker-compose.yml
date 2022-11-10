@@ -6,7 +6,7 @@ services:
       dockerfile: postgres-14.dockerfile
     volumes:
       # TODO we may need to move this directory _outside_ the docker dir to allow for future docker-compose builds...
-      - pg14:/var/lib/postgresql/data
+      - pg14:/var/lib/postgresql
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
@@ -21,7 +21,7 @@ services:
     volumes:
       - /var/lib/postgresql/data
       # TODO we may need to move this directory _outside_ the docker dir to allow for future docker-compose builds...
-      - pg14:/var/lib/postgresql/14/data
+      - pg14:/var/lib/postgresql/14
     environment:
       PGUSER: odk
       POSTGRES_INITDB_ARGS: -U odk

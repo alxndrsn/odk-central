@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 set -o pipefail
 
-alreadyRunMarkerFile="$PGDATANEW/.odk-9.6-to-14-migration-completed-ok"
+alreadyRunMarkerFile="$PGDATANEW/../.odk-9.6-to-14-migration-completed-ok"
 
 logPrefix="$(basename $0)"
 log() {
@@ -44,9 +44,10 @@ else
     # perfectly.  We can hedge our bets and make life easier by
     # skipping cleanup here, and providing a docker command to prune
     # the old, unused volume in the next odk-central version.
+    # TODO REVIEW THIS! ^^^
 
     log "Migration complete."
-  ) 2> >(tee "$PGDATANEW/.migrate-9.6-14.log" >&2)
+  ) 2> >(tee "$PGDATANEW/../.migrate-9.6-14.log" >&2)
   else
     log "No legacy data found."
   fi
