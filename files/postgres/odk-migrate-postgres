@@ -46,7 +46,7 @@ else
     # the old, unused volume in the next odk-central version.
 
     log "Migration complete."
-  ) >(tee "$PGDATANEW/migrate-9.6-14.log" >&2)
+  ) 2> >(tee "$PGDATANEW/migrate-9.6-14.log" >&2)
   else
     log "No legacy data found."
   fi
