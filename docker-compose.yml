@@ -6,7 +6,7 @@ services:
       dockerfile: postgres-14.dockerfile
     volumes:
       # TODO we may need to move this directory _outside_ the docker dir to allow for future docker-compose builds...
-      - ./files/postgres-14/data:/var/lib/postgresql/data
+      - pg14:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
@@ -125,3 +125,7 @@ volumes:
   enketo_redis_main:
   enketo_redis_cache:
   secrets:
+  pg14:
+    driver: local
+    driver_opts:
+      device: ./files/postgres-14/data
