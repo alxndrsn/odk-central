@@ -12,7 +12,7 @@ log "Checking for existing migration marker file..."
 if [[ -f "$alreadyRunMarkerFile" ]]; then
   log "Migration has been run previously."
 else
-  if [[ -f /var/lib/postgresql/data/PG_VERSION ]]; then (
+  if [[ -f "$PGDATANEW/PG_VERSION" ]]; then (
     log "Migration not run previously; migrating now..."
 
     # --link should take less disk space, but doesn't work on MacOSX on github actions
