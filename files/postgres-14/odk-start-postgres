@@ -3,6 +3,11 @@ set -o pipefail
 
 alreadyRunMarkerFile=/var/lib/postgresql/.odk-9.6-to-14-migration-completed-ok
 
+echo "------------------------------XXX------------------------------"
+ls -al /var/lib/postgresql
+ls -al /var/lib/postgresql/data
+echo "------------------------------XXX------------------------------"
+
 logPrefix="$(basename $0)"
 log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
