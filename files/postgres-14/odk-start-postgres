@@ -1,11 +1,11 @@
 #!/bin/bash -eu
 set -o pipefail
 
-alreadyRunMarkerFile=/var/lib/postgresql/.odk-9.6-to-14-migration-completed-ok
+alreadyRunMarkerFile="$PGDATA/../.odk-9.6-to-14-migration-completed-ok"
 
 echo "------------------------------XXX------------------------------"
-ls -al /var/lib/postgresql
-ls -al /var/lib/postgresql/data
+ls -al "$PGDATA/.."
+ls -al "$PGDATA"
 echo "------------------------------XXX------------------------------"
 
 logPrefix="$(basename $0)"
