@@ -18,7 +18,7 @@ else
     log "From: $PGDATAOLD"
     log "  To: $PGDATANEW"
 
-    docker-upgrade pg_upgrade --link
+    docker-upgrade pg_upgrade
 
     # see https://github.com/tianon/docker-postgres-upgrade/issues/16,
     #     https://github.com/tianon/docker-postgres-upgrade/issues/1
