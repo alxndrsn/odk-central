@@ -1,3 +1,4 @@
+# see: https://github.com/tianon/docker-postgres-upgrade/blob/master/9.6-to-14/Dockerfile
 FROM tianon/postgres-upgrade:9.6-to-14
 
 # This file should be provided by the sysadmin performing the upgrade:
