@@ -47,11 +47,6 @@ else
     # the old, unused volume in the next odk-central version.
     # TODO REVIEW THIS! ^^^
 
-    echo "------------------------------XXX------------------------------"
-    ls -al /var/lib/postgresql/14
-    ls -al /var/lib/postgresql/14/data
-    echo "------------------------------XXX------------------------------"
-
     log "Migration complete."
   ) 2> >(tee "/migration-logs/migrate-postgres-9.6-14.log" >&2)
   else
