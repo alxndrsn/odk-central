@@ -18,7 +18,18 @@ else
     log "From: $PGDATAOLD"
     log "  To: $PGDATANEW"
 
-    docker-upgrade pg_upgrade
+    # standard ENTRYPOINT/CMD combo from parent Dockerfile
+    if ! docker-upgrade pg_upgrade; then
+      log "!!!"
+      log "!!! pg_upgrade FAILED; dumping log files..."
+      log "!!!"
+      ls -halt # FIXME this line for debug only
+      tail -n+1 pg_upgrade_*.log || log "No pg_upgrade log files found ¯\_(ツ)_/¯"
+      log "!!!"
+      log "!!! pg_upgrade FAILED; check above for clues."
+      log "!!!"
+      exit 1
+    fi
 
     # see https://github.com/tianon/docker-postgres-upgrade/issues/16,
     #     https://github.com/tianon/docker-postgres-upgrade/issues/1
@@ -48,7 +59,7 @@ else
     # TODO REVIEW THIS! ^^^
 
     log "Migration complete."
-  ) 2> >(tee --append "/migration-logs/migrate-postgres-9.6-14.log" >&2)
+  ) > >(tee --append "/migration-logs/migrate-postgres-9.6-14.log" >&2) 2>&1
   else
     log "No legacy data found."
   fi
