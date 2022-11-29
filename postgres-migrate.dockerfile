@@ -2,7 +2,7 @@
 FROM tianon/postgres-upgrade:9.6-to-14
 
 # This file should be provided by the sysadmin performing the upgrade:
-COPY allow-postgres-database-version-updated .
+COPY allow-postgres-database-version-update .
 
 COPY files/postgres/odk-migrate-postgres /usr/local/bin/
 
