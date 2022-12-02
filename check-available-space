@@ -6,6 +6,8 @@ log() {
   echo "[$logPrefix] $*"
 }
 
+log "WARNING: sudo is required to check size of postgres docker volume."
+
 free="$(df --output=avail . | tail -n+2)"
 used="$(sudo du -s $(docker volume inspect --format='{{.Mountpoint}}' $(docker inspect --format='{{(index .Mounts 0).Name}}' central_postgres_1)) | cut -f1)"
 
