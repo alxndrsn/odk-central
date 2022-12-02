@@ -14,6 +14,8 @@ jobs:
           DOMAIN=local
           SYSADMIN_EMAIL=no-reply@getodk.org' > .env
 
+      - run: touch allow-postgres-database-version-update
+
       - run: docker-compose build
 
       - run:
@@ -22,7 +24,6 @@ jobs:
           name: Verify frontend and backend load
           command: |
             set -x
-            touch allow-postgres-database-version-update
             docker-compose up -d
             CONTAINER_NAME=$(docker inspect -f '{{.Name}}' $(docker-compose ps -q nginx) | cut -c2-)
             docker run --network container:$CONTAINER_NAME \
