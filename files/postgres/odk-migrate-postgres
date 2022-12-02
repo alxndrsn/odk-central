@@ -59,22 +59,27 @@ else
     # TODO REVIEW THIS! ^^^
     log "Removing legacy data..."
     cat ./delete_old_cluster.sh
+    lsof +D "$PGDATAOLD"
     ps aux
     log "Sleeping..."
     sleep 10
     log "Woke up OK."
+    lsof +D "$PGDATAOLD"
     ps aux
     log "Sleeping..."
     sleep 10
     log "Woke up OK."
+    lsof +D "$PGDATAOLD"
     ps aux
     log "Sleeping..."
     sleep 10
     log "Woke up OK."
+    lsof +D "$PGDATAOLD"
     ps aux
     log "Sleeping..."
     sleep 10
     log "Woke up OK."
+    lsof +D "$PGDATAOLD"
     ps aux
     ./delete_old_cluster.sh
 
