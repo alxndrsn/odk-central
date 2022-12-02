@@ -58,10 +58,7 @@ else
     # the old, unused volume in the next odk-central version.
     # TODO REVIEW THIS! ^^^
     log "Removing legacy data..."
-    lsof +D "$PGDATAOLD"
     cat ./delete_old_cluster.sh
-    sleep 10
-    lsof +D "$PGDATAOLD"
     sleep 10
     ./delete_old_cluster.sh
 
