@@ -59,9 +59,23 @@ else
     # TODO REVIEW THIS! ^^^
     log "Removing legacy data..."
     cat ./delete_old_cluster.sh
+    ps aux
     log "Sleeping..."
     sleep 10
     log "Woke up OK."
+    ps aux
+    log "Sleeping..."
+    sleep 10
+    log "Woke up OK."
+    ps aux
+    log "Sleeping..."
+    sleep 10
+    log "Woke up OK."
+    ps aux
+    log "Sleeping..."
+    sleep 10
+    log "Woke up OK."
+    ps aux
     ./delete_old_cluster.sh
 
     log "Migration complete."
