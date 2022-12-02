@@ -2,6 +2,7 @@
 set -o pipefail
 
 alreadyRunMarkerFile="$PGDATANEW/../.odk-postgres-9.6-to-15-migration-completed-ok"
+deleteOldDataMarkerFile="$PGDATANEW/../delete-old-postgres9.6-data-on-next-restart"
 
 logPrefix="$(basename $0)"
 log() {
@@ -11,8 +12,42 @@ log() {
 log "Checking for existing migration marker file..."
 if [[ -f "$alreadyRunMarkerFile" ]]; then
   log "Migration has been run previously."
+
+  if [[ -f "$deleteOldDataMarkerFile" ]]; then
+    log "Deleting legacy data..."
+    rm "$deleteOldDataMarkerFile"
+    ./delete_old_cluster.sh
+    rm ./delete_old_cluster.sh
+    log "Legacy data deleted."
+  elif [[ -f "$PGDATAOLD/PG_VERSION" ]]; then
+    log "!!!"
+    log "!!! WARNING: it looks like you still have leftover data from PostgreSQL 9.6."
+    log "!!!"
+    log "!!! This is taking up disk space: $(df -h --output=size "$PGDATAOLD" | tail -n+2)B"
+    log "!!!"
+    log "!!! If you would like to remove this data, please create file: $deleteOldDataMarkerFile"
+    log "!!!"
+  fi
 else
-  if [[ -f "$PGDATAOLD/PG_VERSION" ]]; then (
+  if [[ -f "$deleteOldDataMarkerFile" ]]; then
+    log "!!!"
+    log "!!! ERROR: Deletion request file created, but migration has not yet run!"
+    log "!!!"
+    log "!!! Please remove file and restart container to continue: $deleteOldDataMarkerFile"
+    log "!!!"
+    exit 1
+  fi
+
+  if ! [[ -f "$PGDATAOLD/PG_VERSION" ]]; then
+    log "No legacy data found."
+  elif [[ -f "$PGDATANEW/PG_VERSION" ]]; then
+    log "!!!"
+    log "!!! ERROR: New data found, but migration not flagged as complete."
+    log "!!!"
+    log "!!! PLEASE REPORT TO ODK TEAM AND ASK FOR ASSISTANCE AT https://forum.getodk.org/c/support"
+    log "!!!"
+    exit 1
+  else (
     log "Migration not run previously; migrating now..."
 
     log "From: $PGDATAOLD"
@@ -59,8 +94,6 @@ else
 
     log "Migration complete."
   ) > >(tee --append "/migration-logs/migrate-postgres-9.6-15.log" >&2) 2>&1
-  else
-    log "No legacy data found."
   fi
   touch "$alreadyRunMarkerFile"
   touch "/migration-logs/migrate-postgres-9.6-15.completed.ok"
