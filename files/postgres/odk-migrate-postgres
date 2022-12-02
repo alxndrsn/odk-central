@@ -6,7 +6,7 @@ deleteOldDataMarkerFileName="delete-old-postgres9.6-data-on-next-restart"
 deleteOldDataMarkerFile="/migration-logs/$deleteOldDataMarkerFileName"
 deleteOldDataMarkerFileForUsers="./migration-logs/$deleteOldDataMarkerFileName"
 
-logPrefix="$(basename $0)"
+logPrefix="$(basename "$0")"
 log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
