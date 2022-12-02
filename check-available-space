@@ -9,7 +9,7 @@ log() {
 log "WARNING: sudo is required to check size of postgres docker volume."
 
 free="$(df --output=avail . | tail -n+2)"
-used="$(sudo du -s $(docker volume inspect --format='{{.Mountpoint}}' $(docker inspect --format='{{(index .Mounts 0).Name}}' central_postgres_1)) | cut -f1)"
+used="$(sudo du -s "$(docker volume inspect --format='{{.Mountpoint}}' "$(docker inspect --format='{{(index .Mounts 0).Name}}' central_postgres_1)")" | cut -f1)"
 
 log
 log "    Free space: $(numfmt --to=si "$((free*1000))")B"
