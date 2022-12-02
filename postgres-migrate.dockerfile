@@ -6,8 +6,6 @@ COPY allow-postgres-database-version-update .
 
 COPY files/postgres/odk-migrate-postgres /usr/local/bin/
 
-RUN apt-get install lsof
-
 # we can't rename/remap this directory, as it's an anonymous volume
 ENV PGDATAOLD=/var/lib/postgresql/data
 
