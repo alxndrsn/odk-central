@@ -1,8 +1,10 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 set -o pipefail
 
 alreadyRunMarkerFile="$PGDATANEW/../.odk-postgres-9.6-to-15-migration-completed-ok"
-deleteOldDataMarkerFile="$PGDATANEW/../delete-old-postgres9.6-data-on-next-restart"
+deleteOldDataMarkerFileName="delete-old-postgres9.6-data-on-next-restart"
+deleteOldDataMarkerFile="/migration-logs/$deleteOldDataMarkerFileName"
+deleteOldDataMarkerFileForUsers="./migration-logs/$deleteOldDataMarkerFileName"
 
 logPrefix="$(basename $0)"
 log() {
@@ -23,9 +25,9 @@ if [[ -f "$alreadyRunMarkerFile" ]]; then
     log "!!!"
     log "!!! WARNING: it looks like you still have leftover data from PostgreSQL 9.6."
     log "!!!"
-    log "!!! This is taking up disk space: $(df -h --output=size "$PGDATAOLD" | tail -n+2)B"
+    log "!!! This is taking up disk space: $(du -hs "$PGDATAOLD" 2>/dev/null | cut -f1)B"
     log "!!!"
-    log "!!! If you would like to remove this data, please create file: $deleteOldDataMarkerFile"
+    log "!!! If you would like to remove this data, please create file: $deleteOldDataMarkerFileForUsers"
     log "!!!"
   fi
 else
@@ -33,7 +35,7 @@ else
     log "!!!"
     log "!!! ERROR: Deletion request file created, but migration has not yet run!"
     log "!!!"
-    log "!!! Please remove file and restart container to continue: $deleteOldDataMarkerFile"
+    log "!!! Please remove file and restart container to continue: $deleteOldDataMarkerFileForUsers"
     log "!!!"
     exit 1
   fi
