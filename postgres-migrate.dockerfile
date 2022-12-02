@@ -1,7 +1,7 @@
 # see: https://github.com/tianon/docker-postgres-upgrade/blob/master/9.6-to-15/Dockerfile
 FROM tianon/postgres-upgrade:9.6-to-15
 
-RUN apt update && apt install lsof procps
+RUN apt update && apt -y install lsof procps
 
 # This file should be provided by the sysadmin performing the upgrade:
 COPY allow-postgres-database-version-update .
