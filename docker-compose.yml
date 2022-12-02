@@ -1,26 +1,26 @@
 version: "3"
 services:
-  postgres-14:
+  postgres-15:
     build:
       context: .
-      dockerfile: postgres-14.dockerfile
+      dockerfile: postgres-15.dockerfile
     volumes:
       # TODO we may need to move this directory _outside_ the docker dir to allow for future docker-compose builds...
-      - pg14:/var/lib/odk-postgresql
+      - pg15:/var/lib/odk-postgresql
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
       POSTGRES_DATABASE: odk
     restart: always
   postgres:
-    # This service migrates from postgres 9.6 to 14.
+    # This service migrates from postgres 9.6 to 15.
     # The legacy name must be maintained to allow access to the anonymous volume.
     build:
       context: .
       dockerfile: postgres-migrate.dockerfile
     volumes:
       - /var/lib/postgresql/data
-      - pg14:/var/lib/postgresql/14
+      - pg15:/var/lib/postgresql/15
       # TODO this can potentially run out of space too!!
       - ./migration-logs:/migration-logs
     environment:
@@ -42,7 +42,7 @@ services:
       dockerfile: service.dockerfile
     depends_on:
       - secrets
-      - postgres-14
+      - postgres-15
       - mail
       - pyxform
       - enketo
@@ -53,7 +53,7 @@ services:
       - DOMAIN=${DOMAIN}
       - HTTPS_PORT=${HTTPS_PORT:-443}
       - SYSADMIN_EMAIL=${SYSADMIN_EMAIL}
-    command: [ "./wait-for-it.sh", "postgres-14:5432", "--", "./start-odk.sh" ]
+    command: [ "./wait-for-it.sh", "postgres-15:5432", "--", "./start-odk.sh" ]
     restart: always
     logging:
       driver: local
@@ -126,4 +126,4 @@ volumes:
   enketo_redis_main:
   enketo_redis_cache:
   secrets:
-  pg14:
+  pg15:
