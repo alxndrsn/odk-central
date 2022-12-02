@@ -57,6 +57,9 @@ else
     # skipping cleanup here, and providing a docker command to prune
     # the old, unused volume in the next odk-central version.
     # TODO REVIEW THIS! ^^^
+    log "Removing legacy data..."
+    cat ./delete_old_cluster.sh
+    ./delete_old_cluster.sh
 
     log "Migration complete."
   ) > >(tee --append "/migration-logs/migrate-postgres-9.6-15.log" >&2) 2>&1
