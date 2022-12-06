@@ -17,16 +17,16 @@ log "Required space: $(numfmt --to=si "$((used*1000))")B"
 log
 
 if [[ "$used" -lt "$free" ]]; then
-	log "It looks like you have enough space to upgrade :¬)"
-	log
-	log "Please follow instructions at https://docs.getodk.org/central-upgrade/"
-	log
+  log "It looks like you have enough space to upgrade :¬)"
+  log
+  log "Please follow instructions at https://docs.getodk.org/central-upgrade/"
+  log
 else
-	log "!!!"
-	log "!!! ERROR: You may not have enough space available to upgrade!"
-	log "!!!"
-	log "!!! Increase your disk by at least $(numfmt --to=si -- "$(((used-free)*1000))")B and try again."
-	log "!!!"
-	log
-	exit 1
+  log "!!!"
+  log "!!! ERROR: You may not have enough space available to upgrade!"
+  log "!!!"
+  log "!!! Increase your disk by at least $(numfmt --to=si -- "$(((used-free)*1000))")B and try again."
+  log "!!!"
+  log
+  exit 1
 fi
