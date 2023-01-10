@@ -1,7 +1,7 @@
 {
   "default": {
     "database": {
-      "host": "postgres-15",
+      "host": "postgres-14",
       "user": "odk",
       "password": "odk",
       "database": "odk"

@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 set -o pipefail
 
-alreadyRunMarkerFile="$PGDATA/../.odk-postgres-9.6-to-15-migration-completed-ok"
+alreadyRunMarkerFile="$PGDATA/../.odk-postgres-9.6-to-14-migration-completed-ok"
 
 logPrefix="$(basename $0)"
 log() {
