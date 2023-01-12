@@ -8,8 +8,22 @@ log() {
 
 log "WARNING: sudo is required to check size of postgres docker volume."
 
-free="$(df --output=avail . | tail -n+2)"
-used="$(sudo du -s "$(docker volume inspect --format='{{.Mountpoint}}' "$(docker inspect --format='{{(index .Mounts 0).Name}}' central_postgres_1)")" | cut -f1)"
+# Check available space in the docker root dir.  This is less risky than with /volumes appended
+# as on some systems the docker root dir may not be executable by the current user.
+free="$(df --output=avail "$(docker info --format '{{print .DockerRootDir}}')" | tail -n+2)"
+
+containerName="central_postgres_1"
+volume="$(docker inspect --format='{{(index .Mounts 0).Name}}' "$containerName")"
+if [[ "$volume" = "" ]]; then
+  log "!!!"
+  log "!!! Volume not found for container: $containerName !!!"
+  log "!!!"
+  log "!!! Cannot continue !!!"
+  log "!!!"
+  exit 1
+fi
+mountpoint="$(docker volume inspect --format='{{.Mountpoint}}' "$volume")"
+used="$(sudo du -s "$mountpoint" | cut -f1)"
 
 log
 log "    Free space: $(numfmt --to=si "$((free*1000))")B"
