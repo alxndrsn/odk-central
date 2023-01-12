@@ -12,4 +12,4 @@ COPY files/postgres/upgrade-postgres.sh /usr/local/bin/
 ENV PGDATAOLD=/var/lib/postgresql/data
 
 ENTRYPOINT []
-CMD ./upgrade-postgres.sh
+CMD upgrade-postgres.sh
