@@ -12,7 +12,7 @@ services:
       POSTGRES_DATABASE: odk
     restart: always
   postgres:
-    # This service migrates from postgres 9.6 to 14.
+    # This service upgrades from postgres 9.6 to 14.
     # The legacy name must be maintained to allow access to the anonymous volume.
     build:
       context: .
@@ -21,7 +21,7 @@ services:
       - /var/lib/postgresql/data
       - pg14:/var/lib/postgresql/14
       # TODO this can potentially run out of space too!!
-      - ./migration-logs:/migration-logs
+      - ./postgres-upgrade-logs:/postgres-upgrade-logs
     environment:
       PGUSER: odk
       POSTGRES_INITDB_ARGS: -U odk

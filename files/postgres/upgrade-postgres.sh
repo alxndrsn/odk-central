@@ -1,19 +1,19 @@
 #!/bin/bash -eu
 set -o pipefail
 
-alreadyRunMarkerFile="$PGDATANEW/../.odk-postgres-9.6-to-14-migration-completed-ok"
+alreadyRunMarkerFile="$PGDATANEW/../.odk-postgres-9.6-to-14-upgrade-completed-ok"
 deleteOldDataMarkerFileName="delete-old-postgres9.6-data-on-next-restart"
-deleteOldDataMarkerFile="/migration-logs/$deleteOldDataMarkerFileName"
-deleteOldDataMarkerFileForUsers="./migration-logs/$deleteOldDataMarkerFileName"
+deleteOldDataMarkerFile="/postgres-upgrade-logs/$deleteOldDataMarkerFileName"
+deleteOldDataMarkerFileForUsers="./postgres-upgrade-logs/$deleteOldDataMarkerFileName"
 
 logPrefix="$(basename "$0")"
 log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
-log "Checking for existing migration marker file..."
+log "Checking for existing upgrade marker file..."
 if [[ -f "$alreadyRunMarkerFile" ]]; then
-  log "Migration has been run previously."
+  log "Upgrade has been run previously."
 
   if [[ -f "$deleteOldDataMarkerFile" ]]; then
     log "Deleting legacy data..."
@@ -33,7 +33,7 @@ if [[ -f "$alreadyRunMarkerFile" ]]; then
 else
   if [[ -f "$deleteOldDataMarkerFile" ]]; then
     log "!!!"
-    log "!!! ERROR: Deletion request file created, but migration has not yet run!"
+    log "!!! ERROR: Deletion request file created, but upgrade has not yet run!"
     log "!!!"
     log "!!! Please remove file and restart container to continue: $deleteOldDataMarkerFileForUsers"
     log "!!!"
@@ -44,13 +44,13 @@ else
     log "No legacy data found."
   elif [[ -f "$PGDATANEW/PG_VERSION" ]]; then
     log "!!!"
-    log "!!! ERROR: New data found, but migration not flagged as complete."
+    log "!!! ERROR: New data found, but upgrade not flagged as complete."
     log "!!!"
     log "!!! PLEASE REPORT TO ODK TEAM AND ASK FOR ASSISTANCE AT https://forum.getodk.org/c/support"
     log "!!!"
     exit 1
   else (
-    log "Migration not run previously; migrating now..."
+    log "Upgrade not run previously; upgrading now..."
 
     log "From: $PGDATAOLD"
     log "  To: $PGDATANEW"
@@ -90,16 +90,16 @@ else
     # pg_upgrade recommends running ./delete_old_cluster.sh, which
     # just runs `rm -rf '/var/lib/postgresql/data'`.  Doing this here
     # can fail with "Device or resource busy".  In addition, deleting
-    # the old data may be risky if the migration didn't complete
+    # the old data may be risky if the upgrade didn't complete
     # perfectly.  We can hedge our bets and make life easier by
     # skipping cleanup here, and providing a docker command to prune
     # the old, unused volume in the next odk-central version.
 
-    log "Migration complete."
-  ) > >(tee --append "/migration-logs/migrate-postgres-9.6-14.log" >&2) 2>&1
+    log "Upgrade complete."
+  ) > >(tee --append "/postgres-upgrade-logs/upgrade-postgres-9.6-14.log" >&2) 2>&1
   fi
   touch "$alreadyRunMarkerFile"
-  touch "/migration-logs/migrate-postgres-9.6-14.completed.ok"
+  touch "/postgres-upgrade-logs/upgrade-postgres-9.6-14.completed.ok"
 fi
 
 log "Shutting down."
