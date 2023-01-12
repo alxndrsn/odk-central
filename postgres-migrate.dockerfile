@@ -5,10 +5,10 @@ FROM tianon/postgres-upgrade:9.6-to-14
 # It's expected it will be provided by the sysadmin performing the upgrade.
 COPY allow-postgres-upgrade .
 
-COPY files/postgres/odk-migrate-postgres /usr/local/bin/
+COPY files/postgres/upgrade-postgres.sh /usr/local/bin/
 
 # we can't rename/remap this directory, as it's an anonymous volume
 ENV PGDATAOLD=/var/lib/postgresql/data
 
 ENTRYPOINT []
-CMD odk-migrate-postgres
+CMD ./upgrade-postgres.sh
