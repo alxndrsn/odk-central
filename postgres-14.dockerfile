@@ -1,6 +1,6 @@
 FROM postgres:14
 
-COPY files/postgres-14/odk-start-postgres /usr/local/bin/
+COPY files/postgres-14/start-postgres.sh /usr/local/bin/
 
 # Override the PGDATA env var in the parent Dockerfile so that the
 # parent's VOLUME declaration does not create a separate VOLUME
@@ -11,4 +11,4 @@ ENV PGDATA /var/lib/odk-postgresql/data
 #RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA"
 
 ENTRYPOINT []
-CMD odk-start-postgres
+CMD start-postgres.sh
