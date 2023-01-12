@@ -3,7 +3,7 @@ FROM tianon/postgres-upgrade:9.6-to-14
 
 # This file is required to encourage human validation of the process.
 # It's expected it will be provided by the sysadmin performing the upgrade.
-COPY allow-postgres-database-version-update .
+COPY allow-postgres-upgrade .
 
 COPY files/postgres/odk-migrate-postgres /usr/local/bin/
 
