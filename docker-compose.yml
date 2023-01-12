@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: postgres-14.dockerfile
     volumes:
-      - pg14:/var/lib/odk-postgresql
+      - postgres_14:/var/lib/odk-postgresql
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
@@ -19,7 +19,7 @@ services:
       dockerfile: postgres-upgrade.dockerfile
     volumes:
       - /var/lib/postgresql/data
-      - pg14:/var/lib/postgresql/14
+      - postgres_14:/var/lib/postgresql/14
       # TODO this can potentially run out of space too!!
       - ./postgres-upgrade-logs:/postgres-upgrade-logs
     environment:
@@ -125,4 +125,4 @@ volumes:
   enketo_redis_main:
   enketo_redis_cache:
   secrets:
-  pg14:
+  postgres_14:
