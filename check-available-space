@@ -11,7 +11,7 @@ if ! sudo -n true 2>/dev/null; then
   log "WARNING: sudo may be required to:"
   log
   log "  1. check size of postgres docker volume."
-  log "  2. check size of postgres docker volume."
+  log "  2. check free disk space available."
   log
 fi
 
