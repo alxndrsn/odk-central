@@ -27,7 +27,9 @@ if [[ -f "$alreadyRunMarkerFile" ]]; then
     log "!!!"
     log "!!! This is taking up disk space: $(du -hs "$PGDATAOLD" 2>/dev/null | cut -f1)B"
     log "!!!"
-    log "!!! If you would like to remove this data, please create file: $deleteOldDataMarkerFileForUsers"
+    log "!!! If you would like to remove this data, please create file:"
+    log "!!!"
+    log "!!!   $deleteOldDataMarkerFileForUsers"
     log "!!!"
   fi
 else
