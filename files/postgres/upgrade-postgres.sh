@@ -16,14 +16,14 @@ if [[ -f "$alreadyRunMarkerFile" ]]; then
   log "Upgrade has been run previously."
 
   if [[ -f "$deleteOldDataMarkerFile" ]]; then
-    log "Deleting legacy data..."
+    log "Deleting old data..."
     rm "$deleteOldDataMarkerFile"
     ./delete_old_cluster.sh
     rm ./delete_old_cluster.sh
     log "Legacy data deleted."
   elif [[ -f "$PGDATAOLD/PG_VERSION" ]]; then
     log "!!!"
-    log "!!! WARNING: it looks like you still have leftover data from PostgreSQL 9.6."
+    log "!!! WARNING: it looks like you still have old data from PostgreSQL 9.6."
     log "!!!"
     log "!!! This is taking up disk space: $(du -hs "$PGDATAOLD" 2>/dev/null | cut -f1)B"
     log "!!!"
@@ -45,7 +45,7 @@ else
   fi
 
   if ! [[ -f "$PGDATAOLD/PG_VERSION" ]]; then
-    log "No legacy data found."
+    log "No old data found."
   elif [[ -f "$PGDATANEW/PG_VERSION" ]]; then
     log "!!!"
     log "!!! ERROR: New data found, but upgrade not flagged as complete."
