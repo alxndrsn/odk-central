@@ -1,2 +1,8 @@
-node_modules
-npm-debug.log
+**
+
+!/docs
+!/files
+
+!/client/src
+
+!/server/lib
