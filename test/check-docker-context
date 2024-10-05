@@ -71,10 +71,8 @@ throw_err() {
 
 log "File count: $file_count"
 if [[ "${skip_count-}" != "true" ]]; then
-  if [[ "$file_count" -lt "$min_count" ]]; then
-    throw_err "This is a surprising number of files"
-  elif [[ "$file_count" -gt "$max_count" ]]; then
-    throw_err "This is a surprising number of files"
+  if [[ "$file_count" -lt "$min_count" ]] || [[ "$file_count" -gt "$max_count" ]]; then
+    throw_err "This is a surprising number of files - expected between $min_count and $max_count"
   fi
 fi
 
