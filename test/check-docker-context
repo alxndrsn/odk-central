@@ -37,7 +37,7 @@ EOF
 vars="$(awk '
   / DONE / { stage="" }
 
-  /RUN find .$/ { stage="files" }
+  /RUN find \./ { stage="files" }
   /RUN du -s .$/ { stage="size" }
 
   stage == "files" { ++file_count }
