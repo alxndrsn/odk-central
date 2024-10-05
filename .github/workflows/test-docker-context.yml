@@ -1,0 +1,13 @@
+name: Test docker context
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    timeout-minutes: 3
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: ./test/check-docker-context --min-size=1000 --max-size=5000 --min-files=50 --max-files=1000
