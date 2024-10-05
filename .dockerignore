@@ -2,6 +2,7 @@
 
 !/docs/
 !/files/
+!/test/files/
 
 !/client/.browserslistrc
 !/client/.eslintrc.js
