@@ -29,7 +29,7 @@ docker build --no-cache --progress plain --file - . 2>&1 <<EOF
 FROM busybox
 COPY . /build-context
 WORKDIR /build-context
-RUN find .
+RUN find . -type f
 RUN du -s .
 EOF
 ) | tee "$tmp"
