@@ -70,7 +70,6 @@ describe('nginx config', () => {
       const res = await fetchHttps(staticFile);
 
       // then
-      assert.isTrue(res.ok);
       assert.equal(res.status, 200);
       assert.equal(await res.text(), `hi:${staticFile}\n`);
       assert.isNull(await res.headers.get('cache-control'));
