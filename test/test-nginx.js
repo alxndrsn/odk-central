@@ -37,24 +37,22 @@ describe('nginx config', () => {
     const res = await fetchHttps('/client-config.json');
 
     // then
-    assert.isTrue(res.ok);
     assert.equal(res.status, 200);
     assert.deepEqual(await res.json(), { oidcEnabled: false });
     assert.equal(await res.headers.get('cache-control'), 'no-cache');
   });
 
   [
-    '/index.html',
-    '/version.txt',
-  ].forEach(staticFile => {
+    [ '/index.html',  /<div id="app"><\/div>/ ],
+    [ '/version.txt', /^versions:/ ],
+  ].forEach(([ staticFile, expectedContent ]) => {
     it(`${staticFile} file should have no-cache header`, async () => {
       // when
       const res = await fetchHttps(staticFile);
 
       // then
-      assert.isTrue(res.ok);
       assert.equal(res.status, 200);
-      assert.equal(await res.text(), `hi:${staticFile}\n`);
+      assert.match(await res.text(), expectedContent);
       assert.equal(await res.headers.get('cache-control'), 'no-cache');
     });
   });
