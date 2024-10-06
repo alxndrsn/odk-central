@@ -32,7 +32,7 @@ RUN chmod +x /scripts/setup-odk.sh
 COPY files/nginx/redirector.conf /usr/share/odk/nginx/
 COPY files/nginx/common-headers.conf /usr/share/odk/nginx/
 
-COPY ./test/files/nginx-test/http_root/ /usr/share/nginx/html
-COPY ./test/files/nginx-test/acme-challenge /var/www/letsencrypt/
+COPY --from=intermediate client/dist/ /usr/share/nginx/html
+COPY --from=intermediate /tmp/version.txt /usr/share/nginx/html
 
 ENTRYPOINT [ "/scripts/setup-odk.sh" ]
