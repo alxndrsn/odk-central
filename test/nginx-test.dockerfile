@@ -34,6 +34,5 @@ COPY files/nginx/common-headers.conf /usr/share/odk/nginx/
 
 COPY ./test/files/nginx-test/http_root/ /usr/share/nginx/html
 COPY ./test/files/nginx-test/acme-challenge /var/www/letsencrypt/
-RUN ls /var/www/letsencrypt/
 
 ENTRYPOINT [ "/scripts/setup-odk.sh" ]
