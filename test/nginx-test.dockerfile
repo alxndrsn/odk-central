@@ -1,8 +1,19 @@
-#
+FROM node:20.17.0-slim AS intermediate
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        git \
+        gettext-base \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./ ./
+RUN files/prebuild/write-version.sh
+RUN files/prebuild/build-frontend.sh
+
+
+
 # KEEP THIS FILE AS CLOSE AS POSSIBLE TO ../nginx.dockerfile
-#
 # It is ESPECIALLY IMPORTANT to keep IDENTICAL BASE IMAGES.
-#
 FROM jonasal/nginx-certbot:5.4.0
 
 EXPOSE 80
