@@ -1,3 +1,4 @@
+const fs = require('node:fs');
 const { assert } = require('chai');
 
 describe('nginx config', () => {
@@ -58,7 +59,9 @@ describe('nginx config', () => {
   });
 
   [
-    '/should-be-cached.txt',
+    '/blank.html',
+    '/favicon.ico',
+    // there's no way to predict generated asset paths, as they have cache-busting names
   ].forEach(staticFile => {
     it(`${staticFile} file should not have no-cache header`, async () => {
       // when
@@ -66,7 +69,6 @@ describe('nginx config', () => {
 
       // then
       assert.equal(res.status, 200);
-      assert.equal(await res.text(), `hi:${staticFile}\n`);
       assert.isNull(await res.headers.get('cache-control'));
     });
   });
