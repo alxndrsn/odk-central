@@ -32,6 +32,7 @@ wait_for_http_response() {
 #diff <(grep FROM nginx-test.dockerfile) <(grep FROM ../nginx.dockerfile | grep -v AS)
 
 log "Starting test services..."
+BUILDKIT_PROGRESS=plain \
 docker_compose up --build --detach
 
 log "Waiting for mock backend..."
