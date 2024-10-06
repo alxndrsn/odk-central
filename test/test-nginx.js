@@ -104,6 +104,24 @@ describe('nginx config', () => {
       { method:'GET', path:'/v1/some/central-backend/path' },
     );
   });
+
+  it('should strip x-forwarded-for header', async () => {
+    // when
+    const res = await fetch(`https://localhost:9001/v1/reflect-headers`, {
+      headers: {
+        'x-forwarded-for': 'bad.example.test',
+      },
+    });
+
+    // then
+    assert.equal(res.status, 200);
+
+    // when
+    const body = await res.json();
+    // then
+    console.log('body:', body);
+    assert.equal(body['x-forwarded-for'], undefined);
+  });
 });
 
 function fetchHttp(path, options) {
