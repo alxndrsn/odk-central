@@ -11,6 +11,7 @@ describe('nginx config', () => {
     const res = await fetchHttp('/.well-known/acme-challenge');
 
     // then
+    assert.isFalse(res.ok);
     assert.equal(res.status, 301);
     assert.equal(res.headers.get('location'), 'https://localhost:9000/.well-known/acme-challenge');
   });
@@ -20,6 +21,7 @@ describe('nginx config', () => {
     const res = await fetchHttps('/.well-known/acme-challenge');
 
     // then
+    assert.isFalse(res.ok);
     assert.equal(res.status, 404);
   });
 
@@ -28,6 +30,7 @@ describe('nginx config', () => {
     const res = await fetchHttp('/');
 
     // then
+    assert.isFalse(res.ok);
     assert.equal(res.status, 301);
     assert.equal(res.headers.get('location'), 'https://localhost:9000/');
   });
@@ -37,6 +40,7 @@ describe('nginx config', () => {
     const res = await fetchHttps('/client-config.json');
 
     // then
+    assert.isTrue(res.ok);
     assert.equal(res.status, 200);
     assert.deepEqual(await res.json(), { oidcEnabled: false });
     assert.equal(await res.headers.get('cache-control'), 'no-cache');
@@ -51,6 +55,7 @@ describe('nginx config', () => {
       const res = await fetchHttps(staticFile);
 
       // then
+      assert.isTrue(res.ok);
       assert.equal(res.status, 200);
       assert.match(await res.text(), expectedContent);
       assert.equal(await res.headers.get('cache-control'), 'no-cache');
@@ -67,6 +72,7 @@ describe('nginx config', () => {
       const res = await fetchHttps(staticFile);
 
       // then
+      assert.isTrue(res.ok);
       assert.equal(res.status, 200);
       assert.isNull(await res.headers.get('cache-control'));
     });
@@ -77,6 +83,7 @@ describe('nginx config', () => {
     const res = await fetchHttps('/-/some/enketo/path');
 
     // then
+    assert.isTrue(res.ok);
     assert.equal(res.status, 200);
     assert.equal(await res.text(), 'OK');
     // and
@@ -90,6 +97,7 @@ describe('nginx config', () => {
     const res = await fetchHttps('/v1/some/central-backend/path');
 
     // then
+    assert.isTrue(res.ok);
     assert.equal(res.status, 200);
     assert.equal(await res.text(), 'OK');
     // and
