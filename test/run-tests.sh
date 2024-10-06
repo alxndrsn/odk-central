@@ -27,7 +27,6 @@ wait_for_http_response() {
 }
 
 log "Starting test services..."
-BUILDKIT_PROGRESS=plain \
 docker_compose up --build --detach
 
 log "Waiting for mock backend..."
