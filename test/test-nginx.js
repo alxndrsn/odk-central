@@ -1,4 +1,3 @@
-const fs = require('node:fs');
 const { assert } = require('chai');
 
 describe('nginx config', () => {
