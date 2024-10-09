@@ -26,7 +26,8 @@ if [ "$SSL_TYPE" = "selfsign" ] && [ ! -s "$SELFSIGN_PATH/privkey.pem" ]; then
 fi
 
 CNAME="$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN")"
-export CNAME
+echo "CNAME: $CNAME"
+export CNAME="$CNAME"
 
 # start from fresh templates in case ssl type has changed
 echo "writing fresh nginx templates..."
