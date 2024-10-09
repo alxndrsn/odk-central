@@ -25,12 +25,12 @@ if [ "$SSL_TYPE" = "selfsign" ] && [ ! -s "$SELFSIGN_PATH/privkey.pem" ]; then
     -days 3650 -nodes -sha256
 fi
 
+CNAME=$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") \
+
 # start from fresh templates in case ssl type has changed
 echo "writing fresh nginx templates..."
 # redirector.conf gets deleted if using upstream SSL so copy it back
-cp /usr/share/odk/nginx/redirector.conf /etc/nginx/conf.d/redirector.conf
-
-CNAME=$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") \
+envsubst '$CNAME' < /usr/share/odk/nginx/redirector.conf > /etc/nginx/conf.d/redirector.conf
 envsubst '$SSL_TYPE $CNAME $SENTRY_ORG_SUBDOMAIN $SENTRY_KEY $SENTRY_PROJECT' \
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
