@@ -25,9 +25,8 @@ if [ "$SSL_TYPE" = "selfsign" ] && [ ! -s "$SELFSIGN_PATH/privkey.pem" ]; then
     -days 3650 -nodes -sha256
 fi
 
+# shellcheck disable=SC2034
 CNAME="$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN")"
-# TODO may not need export
-export CNAME
 
 # start from fresh templates in case ssl type has changed
 echo "writing fresh nginx templates..."
