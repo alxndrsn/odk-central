@@ -141,7 +141,7 @@ describe('nginx config', () => {
     const res = await fetchHttps('/.well-known/acme-challenge', { headers:{ host:'bad.example.com' } });
 
     // then
-    assert.equal(res.status, 400);
+    assert.equal(res.status, 421);
   });
 });
 
