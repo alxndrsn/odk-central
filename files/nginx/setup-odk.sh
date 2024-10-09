@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 
 echo "writing client config..."
@@ -32,9 +32,11 @@ CNAME="$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN")"
 echo "writing fresh nginx templates..."
 # redirector.conf gets deleted if using upstream SSL so copy it back
 envsubst '$CNAME' < /usr/share/odk/nginx/redirector.conf > /etc/nginx/conf.d/redirector.conf
+cat /etc/nginx/conf.d/redirector.conf
 envsubst '$SSL_TYPE $CNAME $SENTRY_ORG_SUBDOMAIN $SENTRY_KEY $SENTRY_PROJECT' \
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
+cat /etc/nginx/conf.d/odk.conf
 
 if [ "$SSL_TYPE" = "letsencrypt" ]; then
   echo "starting nginx for letsencrypt..."
