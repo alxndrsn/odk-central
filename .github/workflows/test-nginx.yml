@@ -18,6 +18,7 @@ jobs:
       with:
         node-version: 20.17.0
     - run: cd test && npm i
+    - run: export HTTPS_PORT=8443
     - run: cd test && ./run-tests.sh
 
     - if: always()
