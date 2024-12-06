@@ -18,8 +18,8 @@ RUN files/prebuild/build-frontend.sh
 # also, confirm setup-odk.sh strips out HTTP-01 ACME challenge location
 FROM jonasal/nginx-certbot:5.4.0
 
-EXPOSE 80
-EXPOSE 443
+EXPOSE $HTTP_PORT
+EXPOSE $HTTPS_PORT
 
 # Persist Diffie-Hellman parameters and/or selfsign key
 VOLUME [ "/etc/dh", "/etc/selfsign" ]
