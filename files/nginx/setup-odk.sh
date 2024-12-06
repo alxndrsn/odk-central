@@ -37,6 +37,14 @@ envsubst '$SSL_TYPE $CNAME $HTTP_PORT $HTTPS_PORT $SENTRY_ORG_SUBDOMAIN $SENTRY_
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
 
+echo "------------- redirector.conf -----------------"
+cat /etc/nginx/conf.d/redirector.conf
+echo "-----------------------------------------------"
+
+echo "---------------- odk.conf ---------------------"
+cat /etc/nginx/conf.d/odk.conf
+echo "-----------------------------------------------"
+
 if [ "$SSL_TYPE" = "letsencrypt" ]; then
   echo "starting nginx for letsencrypt..."
   /bin/bash /scripts/start_nginx_certbot.sh
