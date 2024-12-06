@@ -33,7 +33,7 @@ envsubst '$HTTP_PORT $HTTPS_PORT' \
   > /etc/nginx/conf.d/redirector.conf
 
 CNAME=$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") \
-envsubst '$SSL_TYPE $CNAME $HTTPS_PORT $HTTPS_PORT $SENTRY_ORG_SUBDOMAIN $SENTRY_KEY $SENTRY_PROJECT' \
+envsubst '$SSL_TYPE $CNAME $HTTP_PORT $HTTPS_PORT $SENTRY_ORG_SUBDOMAIN $SENTRY_KEY $SENTRY_PROJECT' \
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
 
