@@ -15,3 +15,6 @@ $simple
 
 # Two values on the same line:
 first: sub_val_one, second: sub_val_two!
+
+# Two values on the same line, both repeated:
+first: sub_val_one, sub_val_one, sub_val_one, second: sub_val_two sub_val_two!
