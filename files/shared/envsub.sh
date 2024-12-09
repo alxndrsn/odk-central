@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/usr/bin/mawk -f
 
 # Safer implemention of envsubst.
 #
@@ -9,18 +9,31 @@
 #   * throw error if value is not defined, instead of just using empty string
 #
 # mawk is the awk implementation common to the containers we need to run this
-# run this script in, so we use it here explicitly.
+# script in, so we use it here explicitly.
 
-mawk '{
+BEGIN {
+  errorCount = 0;
+}
+
+{
   while(match($0, /\$\{[A-Z_][A-Z_0-9]*\}/) > 0) {
     k = substr($0, RSTART+2, RLENGTH-3);
     if(k in ENVIRON) {
       v = ENVIRON[k];
-      gsub("\$\{" k "\}", v);
     } else {
-      print "No env value found: ${" k "}";
-      exit 1
+      print "ERR: var not defined on line " NR ": ${" k "}" > "/dev/fd/2";
+      ++errorCount;
+      v = "!!!VALUE-MISSING: " k "!!!"
     }
+    gsub("\$\{" k "\}", v);
   }
-  print $0
-}'
+  print $0;
+}
+
+END {
+  if(errorCount > 0) {
+    print "" > "/dev/fd/2";
+    print errorCount " error(s) found." > "/dev/fd/2";
+    exit 1;
+  }
+}

@@ -1,7 +1,5 @@
 #!/bin/bash -eu
-
 log() { echo >&2 "[test/envsub] $*"; }
-
 
 failCount=0
 
@@ -20,11 +18,26 @@ else
 fi
 
 log "should fail when asked to substitute undefined value"
-if ! ../../files/shared/envsub.sh <<<'${NOT_DEFINED}'; then
+if ! ../../files/shared/envsub.sh <<<"\${NOT_DEFINED}"; then
   log "  OK"
 else
   ((++failCount))
   log "  FAILED"
+fi
+
+log "should log all issues when asked to substitute multiple undefined values"
+out="$(mktemp)"
+err="$(mktemp)"
+if ../../files/shared/envsub.sh < bad-example.in >"$out" 2>"$err"; then
+  ((++failCount))
+  log "  FAILED: expected non-zero status code"
+elif ! diff "$out" bad-example.stdout.expected; then
+  ((++failCount))
+  log "  FAILED: generated stdout did not equal expected output"
+elif ! diff "$err" bad-example.stderr.expected; then
+  echo "err: $err"
+  ((++failCount))
+  log "  FAILED: generated stderr did not equal expected output"
 fi
 
 if [[ "$failCount" = 0 ]]; then
