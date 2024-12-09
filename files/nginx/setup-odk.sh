@@ -1,20 +1,14 @@
 #!/bin/bash
 
-nginx_envsubst() {
-  # Re-implementation of envsubst which is safe to call on nginx config files.
-  # This fn only substitutes variables in the form ${CAPS_AND_UNDERSCORES},
-  # allowing nginx variables like $host, $request_uri etc. through unmodified.
-  perl -pe 's/\$\{([A-Z_]*)\}/$ENV{$1}/g'
-}
-
-
 echo "writing client config..."
 if [[ $OIDC_ENABLED != 'true' ]] && [[ $OIDC_ENABLED != 'false' ]]; then
   echo 'OIDC_ENABLED must be either true or false'
   exit 1
 fi
 
-envsubst < /usr/share/odk/nginx/client-config.json.template > /usr/share/nginx/html/client-config.json
+/scripts/envsubber \
+  < /usr/share/odk/nginx/client-config.json.template \
+  > /usr/share/nginx/html/client-config.json
 
 
 DH_PATH=/etc/dh/nginx.pem
