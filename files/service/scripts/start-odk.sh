@@ -4,7 +4,7 @@ echo "generating local service configuration.."
 
 ENKETO_API_KEY=$(cat /etc/secrets/enketo-api-key) \
 BASE_URL=$( [ "${HTTPS_PORT}" = 443 ] && echo https://"${DOMAIN}" || echo https://"${DOMAIN}":"${HTTPS_PORT}" ) \
-envsubst \
+/scripts/envsub.sh \
     < /usr/share/odk/config.json.template \
     > /usr/odk/config/local.json
 

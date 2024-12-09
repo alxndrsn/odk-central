@@ -7,7 +7,7 @@ BASE_URL=$( [ "${HTTPS_PORT}" = 443 ] && echo https://"${DOMAIN}" || echo https:
 SECRET=$(cat /etc/secrets/enketo-secret) \
 LESS_SECRET=$(cat /etc/secrets/enketo-less-secret) \
 API_KEY=$(cat /etc/secrets/enketo-api-key) \
-envsubst \
+/scripts/envsub.sh \
     < "$CONFIG_PATH.template" \
     > "$CONFIG_PATH"
 

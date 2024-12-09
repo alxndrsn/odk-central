@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-log() { echo >&2 "[test/envsubber] $*"; }
+log() { echo >&2 "[test/envsub] $*"; }
 
 
 failed=0
@@ -10,7 +10,7 @@ if diff <( \
   SIMPLE=sv_simple \
   SUBVAL_1=sub_val_one \
   SUBVAL_2=sub_val_two \
-  ../../files/nginx/envsubber \
+  ../../files/shared/envsub.sh \
 < good-example.in
 ) good-example.expected; then
   log "  OK"
@@ -20,7 +20,7 @@ else
 fi
 
 log "should fail when asked to substitute undefined value"
-if ! ../../files/nginx/envsubber <<<'${NOT_DEFINED}'; then
+if ! ../../files/shared/envsub.sh <<<'${NOT_DEFINED}'; then
   log "  OK"
 else
   failed=1

@@ -6,7 +6,7 @@ if [[ $OIDC_ENABLED != 'true' ]] && [[ $OIDC_ENABLED != 'false' ]]; then
   exit 1
 fi
 
-/scripts/envsubber \
+/scripts/envsub.sh \
   < /usr/share/odk/nginx/client-config.json.template \
   > /usr/share/nginx/html/client-config.json
 
@@ -32,7 +32,7 @@ echo "writing fresh nginx templates..."
 cp /usr/share/odk/nginx/redirector.conf /etc/nginx/conf.d/redirector.conf
 
 CNAME=$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") \
-nginx_envsubst \
+/scripts/envsub.sh \
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
 
