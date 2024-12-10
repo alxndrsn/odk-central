@@ -5,6 +5,16 @@ on:
   pull_request:
 
 jobs:
+  shellcheck:
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+        submodules: recursive
+    - run: git ls-files '*.sh' | xargs shellcheck
   test-envsubst:
     timeout-minutes: 2
     runs-on: ubuntu-latest
