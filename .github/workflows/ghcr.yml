@@ -7,16 +7,13 @@ on:
     workflows: [Test]
     types:
     - completed
-    #tags:
-    #- v*.*.*"
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
   check-images-are-used:
-    # Only run this job if tests pass, or this workflow was triggered manually.
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.ref_type == 'tag' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,7 +30,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/central-${{ matrix.image }}
       - name: "Checking release image is referenced in docker-compose.yml..."
-        if: ${{ github.ref_type == 'tag' }}
         run: 'grep "${{ steps.meta.outputs.tags }}" docker-compose.yml'
 
   build-push-image:
