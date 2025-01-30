@@ -6,7 +6,7 @@ on:
   workflow_run:
     workflows: [Test]
     types:
-    - completed
+      - completed
 
 env:
   REGISTRY: ghcr.io
