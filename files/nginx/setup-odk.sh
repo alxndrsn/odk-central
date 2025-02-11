@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/bin/bash -eu
+set -o pipefail
 
 echo "writing client config..."
 if [[ $OIDC_ENABLED != 'true' ]] && [[ $OIDC_ENABLED != 'false' ]]; then

@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash -eu
+set -o pipefail
 
 CONFIG_PATH=${ENKETO_SRC_DIR}/config/config.json
 echo "generating enketo configuration..."

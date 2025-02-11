@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash -eu
+set -o pipefail
 
 echo "generating local service configuration.."
 
@@ -17,9 +18,6 @@ export SENTRY_TAGS
 
 echo "running migrations.."
 node ./lib/bin/run-migrations
-
-echo "checking migration success.."
-node ./lib/bin/check-migrations
 
 if [ $? -eq 1 ]; then
   echo "*** Error starting ODK! ***"
@@ -79,4 +77,3 @@ echo "using $WORKER_COUNT worker(s) based on available memory ($MEMTOT).."
 
 echo "starting server."
 exec npx pm2-runtime ./pm2.config.js
-

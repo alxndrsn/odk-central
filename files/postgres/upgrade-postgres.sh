@@ -1,5 +1,4 @@
 #!/bin/bash -eu
-
 set -o pipefail
 
 flag_upgradeCompletedOk="$PGDATANEW/../.postgres14-upgrade-successful"
