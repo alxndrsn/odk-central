@@ -19,12 +19,6 @@ export SENTRY_TAGS
 echo "running migrations.."
 node ./lib/bin/run-migrations
 
-if [ $? -eq 1 ]; then
-  echo "*** Error starting ODK! ***"
-  echo "After attempting to automatically migrate the database, we have detected unapplied migrations, which suggests a problem with the database migration step. Please look in the console above this message for any errors and post what you find in the forum: https://forum.getodk.org/"
-  exit 1
-fi
-
 echo "starting cron.."
 cron -f &
 
