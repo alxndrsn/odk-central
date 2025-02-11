@@ -27,6 +27,14 @@ for script in $scriptFiles; do
     exit 1
   fi
   log "    Passed OK."
+
+  log "  Checking for indirect invocations..."
+  # shellcheck disable=2086
+  if git grep -E "sh.*$(basename "$script")" $scriptFiles; then
+    log "    !!! Indirect invocation(s) found !!!"
+    exit 1
+  fi
+  log "    Passed OK."
 done
 
 log "Running shellcheck..."
