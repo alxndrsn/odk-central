@@ -1,6 +1,7 @@
 #!/bin/bash -eu
+set -o pipefail
 
-log() { echo >&2 "[$(basename $0)] $*"; }
+log() { echo >&2 "[$(basename "$0")] $*"; }
 
 scriptFiles="$(cat <(git grep -El '^#!.*sh\b') <(git ls-files | grep -E '.sh$') | sort -u)"
 
@@ -16,7 +17,7 @@ for script in $scriptFiles; do
   log "    passed OK."
 
   log "  Checking trailing newline..."
-  if ! [[ -z "$(tail -c 1 < "$script")" ]]; then
+  if [[ -n "$(tail -c 1 < "$script")" ]]; then
     log "    !!! Missing final newline !!!"
     exit 1
   fi
