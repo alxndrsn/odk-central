@@ -1,5 +1,6 @@
 #!/bin/bash -eu
 set -o pipefail
+shopt -s inherit_errexit
 
 echo "writing client config..."
 if [[ $OIDC_ENABLED != 'true' ]] && [[ $OIDC_ENABLED != 'false' ]]; then
@@ -20,12 +21,12 @@ openssl req -x509 -nodes -newkey rsa:2048 \
     -days 365000
 
 DH_PATH=/etc/dh/nginx.pem
-if [ "$SSL_TYPE" != "upstream" ] && [ ! -s "$DH_PATH" ]; then
+if [[ "$SSL_TYPE" != "upstream" ]] && [[ ! -s "$DH_PATH" ]]; then
   openssl dhparam -out "$DH_PATH" 2048
 fi
 
 SELFSIGN_PATH="/etc/selfsign/live/$DOMAIN"
-if [ "$SSL_TYPE" = "selfsign" ] && [ ! -s "$SELFSIGN_PATH/privkey.pem" ]; then
+if [[ "$SSL_TYPE" = "selfsign" ]] && [[ ! -s "$SELFSIGN_PATH/privkey.pem" ]]; then
   mkdir -p "$SELFSIGN_PATH"
   openssl req -x509 -newkey rsa:4086 \
     -subj "/C=XX/ST=XXXX/L=XXXX/O=XXXX/CN=localhost" \
@@ -41,16 +42,16 @@ envsubst '$DOMAIN' \
   < /usr/share/odk/nginx/redirector.conf \
   > /etc/nginx/conf.d/redirector.conf
 
-CERT_DOMAIN=$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") \
+CERT_DOMAIN=$( [[ "$SSL_TYPE" = "customssl" ]] && echo "local" || echo "$DOMAIN") \
 envsubst '$SSL_TYPE $CERT_DOMAIN $DOMAIN $SENTRY_ORG_SUBDOMAIN $SENTRY_KEY $SENTRY_PROJECT' \
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
 
-if [ "$SSL_TYPE" = "letsencrypt" ]; then
+if [[ "$SSL_TYPE" = "letsencrypt" ]]; then
   echo "starting nginx for letsencrypt..."
   /bin/bash /scripts/start_nginx_certbot.sh
 else
-  if [ "$SSL_TYPE" = "upstream" ]; then
+  if [[ "$SSL_TYPE" = "upstream" ]]; then
     # no need for letsencrypt challenge reply or 80 to 443 redirection
     rm -f /etc/nginx/conf.d/redirector.conf
     # strip out all ssl_* directives

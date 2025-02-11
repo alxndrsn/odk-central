@@ -1,5 +1,6 @@
 #!/bin/bash -eu
 set -o pipefail
+shopt -s inherit_errexit
 
 log() { echo >&2 "[$(basename "$0")] $*"; }
 
@@ -9,12 +10,12 @@ for script in $scriptFiles; do
   log "Checking $script ..."
 
   log "  Checking shebang..."
-  shebang="$(head -n2 "$script")"
-  if ! diff <(echo "$shebang") <(printf '#!/bin/bash -eu\nset -o pipefail\n'); then
+  shebang="$(head -n3 "$script")"
+  if ! diff <(echo "$shebang") <(printf '#!/bin/bash -eu\nset -o pipefail\nshopt -s inherit_errexit\n'); then
     log "    !!! Unexpected shebang !!!"
     exit 1
   fi
-  log "    passed OK."
+  log "    Passed OK."
 
   log "  Checking trailing newline..."
   if [[ -n "$(tail -c 1 < "$script")" ]]; then
@@ -25,9 +26,15 @@ for script in $scriptFiles; do
     log "    !!! Blank lines at end of file !!!"
     exit 1
   fi
-  log "    passed OK."
-
-  log "  Running shellcheck..."
-  shellcheck --exclude=SC2016 "$script"
-  log "    passed OK."
+  log "    Passed OK."
 done
+
+log "Running shellcheck..."
+echo "$scriptFiles" | xargs \
+    shellcheck \
+        --enable=all \
+        --exclude=SC2016,SC2154,SC2250,SC2312 \
+        "$script"
+log "  Shellcheck passed OK."
+
+log "All scripts passed OK."

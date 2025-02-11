@@ -1,10 +1,11 @@
 #!/bin/bash -eu
 set -o pipefail
+shopt -s inherit_errexit
 
 echo "generating local service configuration.."
 
 ENKETO_API_KEY=$(cat /etc/secrets/enketo-api-key) \
-BASE_URL=$( [ "${HTTPS_PORT}" = 443 ] && echo https://"${DOMAIN}" || echo https://"${DOMAIN}":"${HTTPS_PORT}" ) \
+BASE_URL=$( [[ "${HTTPS_PORT}" = 443 ]] && echo https://"${DOMAIN}" || echo https://"${DOMAIN}":"${HTTPS_PORT}" ) \
 envsubst '$DOMAIN $BASE_URL $SYSADMIN_EMAIL $ENKETO_API_KEY $DB_HOST $DB_USER $DB_PASSWORD $DB_NAME $DB_SSL $EMAIL_FROM $EMAIL_HOST $EMAIL_PORT $EMAIL_SECURE $EMAIL_IGNORE_TLS $EMAIL_USER $EMAIL_PASSWORD $OIDC_ENABLED $OIDC_ISSUER_URL $OIDC_CLIENT_ID $OIDC_CLIENT_SECRET $SENTRY_ORG_SUBDOMAIN $SENTRY_KEY $SENTRY_PROJECT $S3_SERVER $S3_ACCESS_KEY $S3_SECRET_KEY $S3_BUCKET_NAME' \
     < /usr/share/odk/config.json.template \
     > /usr/odk/config/local.json
@@ -26,7 +27,7 @@ get_cgroup_version() {
   # The max memory calculation is different between cgroup v1 & v2
   local cgroup_type
   cgroup_type=$(stat -fc %T /sys/fs/cgroup/)
-  if [ "$cgroup_type" == "cgroup2fs" ]; then
+  if [[ "$cgroup_type" == "cgroup2fs" ]]; then
     echo "v2"
   else
     echo "v1"
@@ -37,10 +38,10 @@ get_memory_limit() {
   local cgroup_version
   cgroup_version=$(get_cgroup_version)
 
-  if [ "$cgroup_version" == "v2" ]; then
+  if [[ "$cgroup_version" == "v2" ]]; then
     local memtot
     memtot=$(cat /sys/fs/cgroup/memory.max)
-    if [ "$memtot" == "max" ]; then
+    if [[ "$memtot" == "max" ]]; then
       # No cgroup memory limit; fallback to system's total memory
       memtot=$(grep MemTotal /proc/meminfo | awk '{print $2 * 1024}')
     fi
@@ -57,7 +58,7 @@ get_memory_limit() {
 
 determine_worker_count() {
   local memtot=$1
-  if [ "$memtot" -gt 1100000 ]; then
+  if [[ "$memtot" -gt 1100000 ]]; then
     echo 4
   else
     echo 1

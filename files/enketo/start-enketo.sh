@@ -1,10 +1,11 @@
 #!/bin/bash -eu
 set -o pipefail
+shopt -s inherit_errexit
 
 CONFIG_PATH=${ENKETO_SRC_DIR}/config/config.json
 echo "generating enketo configuration..."
 
-BASE_URL=$( [ "${HTTPS_PORT}" = 443 ] && echo https://"${DOMAIN}" || echo https://"${DOMAIN}":"${HTTPS_PORT}" ) \
+BASE_URL=$( [[ "${HTTPS_PORT}" = 443 ]] && echo https://"${DOMAIN}" || echo https://"${DOMAIN}":"${HTTPS_PORT}" ) \
 SECRET=$(cat /etc/secrets/enketo-secret) \
 LESS_SECRET=$(cat /etc/secrets/enketo-less-secret) \
 API_KEY=$(cat /etc/secrets/enketo-api-key) \
