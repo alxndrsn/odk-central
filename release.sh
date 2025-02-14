@@ -42,11 +42,11 @@ fi
 log "  HEAD seems to be in-line with upstream."
 
 year="$(date +%Y)"
-if git tag | grep "^$year\."; then
-  lastMinor="$(git tag | grep v2024 | tail -n1 | cut -d'.' -f2)"
-  suggestedVersion="$year.$((lastMinor+1)).0"
+if git tag | grep "^v$year\."; then
+  lastMinor="$(git tag | grep "^v$year" | tail -n1 | cut -d'.' -f2)"
+  suggestedVersion="v$year.$((lastMinor+1)).0"
 else
-  suggestedVersion="$year.1.0"
+  suggestedVersion="v$year.1.0"
 fi
 printf "[release] Version to release ($suggestedVersion): "
 read newVersion
