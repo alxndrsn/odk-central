@@ -40,7 +40,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/central-${{ matrix.image }}
       - name: "Checking release image is referenced in docker-compose.yml..."
-        if: ${{ github.ref_type == 'tag' }}
         run: 'grep "${{ steps.meta.outputs.tags }}" docker-compose.yml'
 
   build-push-image:
