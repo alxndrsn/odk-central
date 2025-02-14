@@ -34,7 +34,7 @@ services:
       - DKIM_KEY_PATH=/etc/exim4/dkim.key.temp
     restart: always
   service:
-    image: 'ghcr.io/getodk/central-service:v0.0.0-test-14'
+    image: 'ghcr.io/alxndrsn/central-service:v0.0.0-test-15'
     depends_on:
       - secrets
       - postgres14
