@@ -19,7 +19,7 @@ jobs:
       - run: 'echo "github.event_name: [ ${{ github.ref_type }} ]"'
       - run: 'echo "github.event.workflow_run.conclusion: [ ${{ github.event.workflow_run.conclusion }} ]"'
       - run: 'echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"'
-      - run: 'echo "Tag name from github.ref_name: ${{  github.ref_name }}"'
+      - run: 'echo "Tag name from github.ref_name: ${{ github.ref_name }}"'
       - run: "echo 'condition 1: [ ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }} ]'"
       - run: "echo 'condition 2: [ ${{ github.ref_type == 'tag' }} && (${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}) ]'"
   check-images-are-used:
@@ -31,7 +31,7 @@ jobs:
         image: [nginx, service]
     steps:
       - name: Check tag format
-        run: '[[ "${{ github.ref_type }}" = v*.*.* ]]'
+        run: '[[ "${{ github.ref_name }}" = v*.*.* ]]'
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Extract Docker metadata
