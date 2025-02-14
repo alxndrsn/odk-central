@@ -60,8 +60,8 @@ fi
 log "Updating version numbers in docker-compose.yml ..."
 tmpfile="$(mktemp)"
 sed -E \
-    -e "s_'ghcr.io/getodk/central-nginx:.*'_'ghcr.io/getodk/central-nginx:$newVersion'_" \
-    -e "s_'ghcr.io/getodk/central-service:.*'_'ghcr.io/getodk/central-service:$newVersion'_" \
+    -e "s_(image:\s+'.*/.*/central-nginx):.*'_\1:$newVersion'_" \
+    -e "s_(image:\s+'.*/.*/central-service):.*'_\1:$newVersion'_" \
     docker-compose.yml > "$tmpfile"
 mv "$tmpfile" docker-compose.yml
 
