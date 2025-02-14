@@ -73,6 +73,7 @@ git tag "$newVersion"
 log "Pushing release to git..."
 git push && git push --tags
 
+echo
 log "Release complete.  Check build progress at:"
 log ""
 log "  https://github.com/getodk/central/actions"
