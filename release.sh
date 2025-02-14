@@ -49,7 +49,7 @@ else
   suggestedVersion="$year.1.0"
 fi
 printf "[release] Version to release ($suggestedVersion): "
-read -p newVersion
+read newVersion
 if ! [[ "$newVersion" = v*.*.* ]]; then
   log "!!!"
   log "!!! Version '$newVersion' does not match expected format."
