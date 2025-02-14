@@ -116,9 +116,7 @@ services:
   enketo:
     volumes:
       - secrets:/etc/secrets
-    build:
-      context: .
-      dockerfile: enketo.dockerfile
+    image: 'ghcr.io/getodk/central-enketo:2025.1'
     restart: always
     depends_on:
       - secrets

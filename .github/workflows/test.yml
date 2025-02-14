@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [nginx, service]
+        image: [nginx, service, enketo]
     steps:
     - name: Check tag format
       run: '[[ "${{ github.ref_name }}" = v*.*.* ]]'
@@ -80,7 +80,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        image: [nginx, service]
+        image: [nginx, service, enketo]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

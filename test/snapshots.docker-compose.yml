@@ -5,3 +5,6 @@ services:
   nginx:
     build:
       dockerfile: nginx.dockerfile
+  enketo:
+    build:
+      dockerfile: enketo.dockerfile
