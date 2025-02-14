@@ -6,7 +6,6 @@ on:
   workflow_run:
     workflows: [Test]
     types: [completed]
-    tags: ["v*.*.*"]
 
 env:
   REGISTRY: ghcr.io
@@ -18,6 +17,8 @@ jobs:
       - run: 'echo "github.event_name: [ ${{ github.event_name }} ]"'
       - run: 'echo "github.event.workflow_run.conclusion: [ ${{ github.event.workflow_run.conclusion }} ]"'
       - run: "echo 'condition: [ ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }} ]'"
+      - run: 'echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"'
+      - run: 'echo "Tag name from github.ref_name: ${{  github.ref_name }}"'
   check-images-are-used:
     # Only run this job if tests pass, or this workflow was triggered manually.
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
