@@ -39,11 +39,11 @@ jobs:
     - run: cd test/nginx && ./run-tests.sh
 
     - if: always()
-      run: docker logs test-nginx-1 || true
+      run: docker logs nginx-nginx-1 || true
     - if: always()
-      run: docker logs test-service-1 || true
+      run: docker logs nginx-service-1 || true
     - if: always()
-      run: docker logs test-enketo-1 || true
+      run: docker logs nginx-enketo-1 || true
   test-images:
     needs:
     - test-misc
