@@ -160,6 +160,7 @@ describe('nginx config', () => {
       const res = await fetchHttps(t.request);
 
       // then
+      assert.notExists(res.headers.get('location'));
       assert.equal(res.status, 200);
       assert.equal(await res.text(), 'OK');
       assertSecurityHeaders(res, { csp:'enketo' });
