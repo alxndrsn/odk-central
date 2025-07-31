@@ -10,7 +10,7 @@ describe('postgres14', () => {
     let client;
 
     beforeEach(async () => {
-      const client = new Client({
+      client = new Client({
         host: 'localhost',
         port: 5432,
         user: 'odk',
@@ -25,6 +25,10 @@ describe('postgres14', () => {
           data CHAR(${dataLen})
         );
       `);
+    });
+
+    afterEach(done => {
+      client?.end(done);
     });
 
     async function rowsExist(rows) {
@@ -60,27 +64,26 @@ describe('postgres14', () => {
       await deleteRows(0.99);
 
       // when
-      const res = await client.query('VACUUM');
-
-      // then
-      assert.equal(res, {
-        TODO: true,
-      });
+      await client.query('VACUUM');
     });
 
-    it('should fail with ___ pages to update', async () => {
+    it('should fail with ___ pages to update', async function() {
+      this.timeout(100_000);
+
       // given
-      await rowsExist(5000);
+      await rowsExist(5_000_000);
       // and
       await deleteRows(0.99);
 
       // when
-      const res = await client.query('VACUUM');
+      let caught;
+      try {
+        await client.query('VACUUM');
+      } catch(err) {
+        caught = err;
+      }
 
-      // then
-      assert.equal(res, {
-        TODO: true,
-      });
+      assert.equal(caught?.message, 'TODO should have thrown a particular error');
     });
   });
 });
