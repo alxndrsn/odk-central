@@ -35,7 +35,7 @@ docker_compose exec postgres14 bash -c '
 '
 
 log "Waiting for postgres..."
-wait_for_postgres_response 300 5432
+wait_for_postgres_response 15 5432
 
 npm run test:postgres14
 
