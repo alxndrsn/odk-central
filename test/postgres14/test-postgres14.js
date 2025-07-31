@@ -49,6 +49,7 @@ describe('postgres14', () => {
       const { rows } = await client.query(`SELECT COUNT(*) FROM ${table}`);
       const { count } = rows[0];
       if(count != Math.floor(+count)) throw new Error(`Count not an integer: ${JSON.stringify(count)}`);
+      console.log('deleteRows()', 'count:', count);
 
       for(let i=0; i<count; i+=batchSize) {
         const query = `DELETE FROM ${table} WHERE id>=$1 AND id <= $2`;
