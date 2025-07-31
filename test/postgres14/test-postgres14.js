@@ -47,22 +47,18 @@ describe('postgres14', () => {
 
     async function deleteRows(deleteProportion) {
       const { rows } = await client.query(`SELECT COUNT(*) FROM ${table}`);
-      console.log('deleteRows()', 'rows:', rows);
       const { count } = rows[0];
-      console.log('deleteRows()', 'count:', count);
-      if(count != Math.floor(+count)) throw new Error(`Count not an integer: ${JSON.stringify(count)`);
+      if(count != Math.floor(+count)) throw new Error(`Count not an integer: ${JSON.stringify(count)}`);
 
       const batchSize = 100;
 
       for(let i=0; i<count; i+=batchSize) {
         const query = `DELETE FROM ${table} WHERE id>=$1 AND id <= $2`;
-        console.log('Deleteing:', query);
-        const res = await client.query(
+        const { rowCount } = await client.query(
           query,
           [ i, i + Math.floor(batchSize * deleteProportion) ],
         );
-
-        console.log('deteled:', res);
+        if(!rowCount) throw new Error(`No rows deleted by query "${query}"`);
       }
     }
 
