@@ -29,6 +29,12 @@ wait_for_postgres_response() {
 log "Starting test services..."
 docker_compose up --build --detach
 
+log "Debugging docker stuff:"
+docker ps
+
+log "Container env:"
+docker_compose exec postgres14 env
+
 log "Marking pg14 upgrade as complete..."
 docker_compose exec postgres14 bash -c '
   set -e
