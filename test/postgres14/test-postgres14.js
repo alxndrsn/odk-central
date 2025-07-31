@@ -95,6 +95,7 @@ describe('postgres14', () => {
       try {
         await vacuum();
       } catch(err) {
+        console.log('Caught error:', err);
         caught = err;
       }
 
