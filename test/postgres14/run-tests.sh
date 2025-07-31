@@ -8,13 +8,12 @@ docker_compose() {
   docker compose --file postgres14.test.docker-compose.yml "$@"
 }
 
-wait_for_http_response() {
+wait_for_postgres_response() {
   local seconds="$1"
-  local url="$2"
-  local expectedStatus="${3-200}"
-  echo >&2 -n "[$(basename "$0")] [$(date)] Waiting for server: $url "
+  local port="$2"
+  echo >&2 -n "[$(basename "$0")] [$(date)] Waiting for postgres on: $port "
   if timeout "$seconds" bash -c -- "
-    until [[ \$(curl --max-time 1 --silent --output /dev/null -w '%{http_code}' '$url') = \"$expectedStatus\" ]]; do
+    until ss -Htnlp 'sport = :5432' 2>/dev/null | read; do
       printf >&2 .
       sleep 0.25
     done
@@ -22,7 +21,7 @@ wait_for_http_response() {
     printf >&2 '✅\n'
   else
     printf >&2 '❌\n'
-    log "!!! URL timed out: $url"
+    log "!!! Postgres connection timed out for port: $port"
     exit 1
   fi
 }
@@ -31,7 +30,7 @@ log "Starting test services..."
 docker_compose up --build --detach
 
 log "Waiting for postgres..."
-wait_for_http_response 5 localhost:5432 200
+wait_for_postgres_response 30 5432
 
 npm run test:postgres14
 
