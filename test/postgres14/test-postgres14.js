@@ -47,6 +47,7 @@ describe('postgres14', () => {
 
     async function deleteRows(deleteProportion) {
       const { rows } = await client.query(`SELECT COUNT(*) FROM ${table}`);
+      console.log('deleteRows()', 'rows:', rows);
       const { count } = rows[0];
       console.log('deleteRows()', 'count:', count);
 
