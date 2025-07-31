@@ -45,12 +45,10 @@ describe('postgres14', () => {
       }
     }
 
-    async function deleteRows(deleteProportion) {
+    async function deleteRows(deleteProportion, batchSize) {
       const { rows } = await client.query(`SELECT COUNT(*) FROM ${table}`);
       const { count } = rows[0];
       if(count != Math.floor(+count)) throw new Error(`Count not an integer: ${JSON.stringify(count)}`);
-
-      const batchSize = 100;
 
       for(let i=0; i<count; i+=batchSize) {
         const query = `DELETE FROM ${table} WHERE id>=$1 AND id <= $2`;
@@ -66,19 +64,19 @@ describe('postgres14', () => {
       // given
       await rowsExist(500);
       // and
-      await deleteRows(0.99);
+      await deleteRows(0.99, 100);
 
       // when
       await client.query('VACUUM');
     });
 
     it('should fail with ___ pages to update', async function() {
-      this.timeout(100_000);
+      this.timeout(100_000); // TODO make this double a reasonable run on CI
 
       // given
-      await rowsExist(5_000_000);
+      await rowsExist(5_000_000); // TODO make this as low as possible to fail on CI
       // and
-      await deleteRows(0.99);
+      await deleteRows(0.99, 100_000);
 
       // when
       let caught;
