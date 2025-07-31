@@ -17,6 +17,9 @@ describe('postgres14', () => {
         database: 'odk',
       });
       await client.connect();
+
+      console.log('beforeEach()', 'maintenance_work_mem:', await client.query(`SELECT current_setting('maintenance_work_mem')`));
+
       await client.query(`
         DROP TABLE IF EXISTS ${table};
         CREATE TABLE ${table} (
