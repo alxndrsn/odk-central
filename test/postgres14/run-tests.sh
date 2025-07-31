@@ -35,6 +35,9 @@ docker ps
 log "Container env:"
 docker_compose exec postgres14 env
 
+log "shm size:"
+docker_compose exec postgres14 df -h /dev/shm
+
 log "Marking pg14 upgrade as complete..."
 sleep 5 # is this for fun?  or somehow useful?
 docker_compose exec postgres14 bash -c '
