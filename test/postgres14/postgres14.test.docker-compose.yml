@@ -15,3 +15,4 @@ services:
       POSTGRES_DB: odk
 volumes:
   postgres14:
+    o: "size=128m"
