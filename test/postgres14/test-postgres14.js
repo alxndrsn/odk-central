@@ -78,7 +78,7 @@ describe('postgres14', () => {
       // given
       await rowsExist(10_000_000); // TODO make this as low as possible to fail on CI
       // and
-      await deleteRows(0.99, 100_000);
+      await deleteRows(0.99, 1_000);
 
       // when
       let caught;
