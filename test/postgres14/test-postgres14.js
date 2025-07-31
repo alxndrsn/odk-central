@@ -52,8 +52,9 @@ describe('postgres14', () => {
       const batchSize = 100;
 
       for(let i=0; i<totalRows; i+=batchSize) {
+        const query = `DELETE FROM ${table} WHERE id>=$? AND id <= $?`;
         await client.query(
-          `DELETE FROM ${table} WHERE id>=$? AND id <= $?`,
+          query,
           [ i, i + Math.floor(batchSize * deleteProportion) ],
         );
       }
