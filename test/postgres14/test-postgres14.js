@@ -6,7 +6,6 @@ describe('postgres14', () => {
   describe('VACUUM', () => {
     const table = 'vac_test_table';
     const dataLen = 100;
-    const deleteProportion = 0.99;
 
     let client;
 
@@ -40,9 +39,22 @@ describe('postgres14', () => {
       }
     }
 
+    async function deleteRows(deleteProportion) {
+      const totalRows = await client.query(`SELECT COUNT(*) FROM ${table}`);
+      const batchSize = 100;
+      while(let i=0; i<totalRows; i+=batchSize) {
+        await client.query(
+          `DELETE FROM ${table} WHERE id>=$? AND id <= $?`,
+          [ i, i + Math.floor(batchSize * deleteProportion) ],
+        );
+      }
+    }
+
     it('should succeed with ___ pages to update', async () => {
       // given
       await rowsExist(500);
+      // and
+      await deleteRows(0.99);
 
       // when
       const res = await client.query('VACUUM');
@@ -56,6 +68,8 @@ describe('postgres14', () => {
     it('should fail with ___ pages to update', async () => {
       // given
       await rowsExist(5000);
+      // and
+      await deleteRows(0.99);
 
       // when
       const res = await client.query('VACUUM');
