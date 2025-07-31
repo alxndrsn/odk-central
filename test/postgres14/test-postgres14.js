@@ -20,6 +20,8 @@ describe('postgres14', () => {
 
       console.log('beforeEach()', 'maintenance_work_mem:', await client.query(`SELECT current_setting('maintenance_work_mem')`));
 
+      await client.query(`ALTER SYSTEM SET max_parallel_maintenance_workers = 8`);
+
       await client.query(`
         DROP TABLE IF EXISTS ${table};
 
@@ -38,8 +40,6 @@ describe('postgres14', () => {
         CREATE INDEX idx_force_shm_v_3 ON ${table} (value3);
         CREATE INDEX idx_force_shm_v_4 ON ${table} (value4);
         CREATE INDEX idx_force_shm_v_5 ON ${table} (value5);
-
-        ALTER SYSTEM SET max_parallel_maintenance_workers = 8;
       `);
     });
 
