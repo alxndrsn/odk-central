@@ -39,6 +39,10 @@ describe('postgres14', () => {
       await client.query(`DELETE FROM ${table} WHERE data % 2 = 0`);
     }
 
+    async function vacuum() {
+      console.log(`vac:`, await client.query(`VACUUM VERBOSE ${table}`));
+    }
+
     it('should succeed with ___ pages to update', async () => {
       // given
       await rowsExist(500);
@@ -46,7 +50,7 @@ describe('postgres14', () => {
       await deleteRows();
 
       // when
-      await client.query('VACUUM');
+      await vacuum();
     });
 
     it('should fail with ___ pages to update', async function() {
@@ -60,7 +64,7 @@ describe('postgres14', () => {
       // when
       let caught;
       try {
-        await client.query('VACUUM');
+        await vacuum();
       } catch(err) {
         caught = err;
       }
