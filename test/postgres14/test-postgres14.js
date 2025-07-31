@@ -68,7 +68,7 @@ describe('postgres14', () => {
         caught = err;
       }
 
-      assert.isDefined(caught, 'An error should have been thrown while vacuuming, but it completed successfully.');
+      assert.isDefined(caught, 'An error should have been thrown while vacuuming, but it completed successfully');
       assert.match(caught.message, /^ERROR: could not resize shared memory segment ".*" to \d+ bytes: No space left on device$/);
     });
   });
