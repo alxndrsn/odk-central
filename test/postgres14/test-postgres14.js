@@ -63,7 +63,7 @@ describe('postgres14', () => {
     }
 
     async function generateChurn() {
-      await client.query(`DELETE FROM ${table} WHERE data % 2 = 0`);
+      await client.query(`DELETE FROM ${table} WHERE id % 2 = 0`);
       await client.query(`UPDATE ${table} SET value1 = value1 + 1 WHERE id % 3 = 0`);
       await client.query(`UPDATE ${table} SET value2 = value2 + 1 WHERE id % 5 = 0`);
     }
