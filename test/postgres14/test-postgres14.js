@@ -37,7 +37,7 @@ describe('postgres14', () => {
       for(let i=rows; i>0; i-= batchSize) {
         const batch = new Array(batchSize);
 
-        for(let j=batchSize-1; j>=0; --j) batch[j] = `${i}:${j}:`).padEnd(dataLen, '');
+        for(let j=batchSize-1; j>=0; --j) batch[j] = `${i}:${j}:`.padEnd(dataLen, '');
 
         await client.query(`
           INSERT INTO ${table} (data) SELECT JSONB_ARRAY_ELEMENTS_TEXT($1::JSONB)
