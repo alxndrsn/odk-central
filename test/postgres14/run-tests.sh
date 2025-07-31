@@ -29,13 +29,10 @@ wait_for_postgres_response() {
 log "Starting test services..."
 docker_compose up --build --detach
 
-docker_compose exec postgres14 bash -c '
-  echo "PGDATA: $PGDATA"
-'
-
 log "Marking pg14 upgrade as complete..."
 docker_compose exec postgres14 bash -c '
   set -e
+  echo "PGDATA: $PGDATA"
   mkdir -p $PGDATA
   touch "$PGDATA/../.postgres14-upgrade-successful"
 '
