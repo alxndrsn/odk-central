@@ -31,7 +31,7 @@ describe('postgres14', () => {
     });
 
     async function rowsExist(rows) {
-      await client.query(`INSERT INTO ${table} (data) GENERATE_SERIES(1, $1)`, [ rows ]);
+      await client.query(`INSERT INTO ${table} (data) SELECT GENERATE_SERIES(1, $1)`, [ rows ]);
     }
 
     async function deleteRows() {
