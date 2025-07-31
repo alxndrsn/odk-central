@@ -52,10 +52,11 @@ describe('postgres14', () => {
 
       for(let i=0; i<count; i+=batchSize) {
         const query = `DELETE FROM ${table} WHERE id>=$1 AND id <= $2`;
-        const { rowCount } = await client.query(
-          query,
-          [ i, i + Math.floor(batchSize * deleteProportion) ],
-        );
+        const params = [ i, i + Math.floor(batchSize * deleteProportion) ];
+
+        console.log('deleteRows()', 'executing:', { query, params });
+        const { rowCount } = await client.query(query, params);
+
         if(!rowCount) throw new Error(`No rows deleted by query "${query}"`);
       }
     }
