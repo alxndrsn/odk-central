@@ -1,0 +1,11 @@
+services:
+  postgres14:
+    build:
+      context: ../..
+      dockerfile: postgres14.dockerfile
+    volumes:
+      - postgres14:/var/lib/odk/postgresql/14
+    environment:
+      POSTGRES_USER: odk
+      POSTGRES_PASSWORD: odk
+      POSTGRES_DB: odk
