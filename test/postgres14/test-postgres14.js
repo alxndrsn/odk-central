@@ -35,7 +35,7 @@ describe('postgres14', () => {
       await client.query(`INSERT INTO ${table} (data) GENERATE_SERIES(1, $1)`, [ rows ]);
     }
 
-    async function deleteRows(deleteProportion, batchSize) {
+    async function deleteRows() {
       await client.query(`DELETE FROM ${table} WHERE data % 2 = 0`);
     }
 
@@ -43,7 +43,7 @@ describe('postgres14', () => {
       // given
       await rowsExist(500);
       // and
-      await deleteRows(0.99, 100);
+      await deleteRows();
 
       // when
       await client.query('VACUUM');
@@ -55,7 +55,7 @@ describe('postgres14', () => {
       // given
       await rowsExist(10_000); // TODO make this as low as possible to fail on CI
       // and
-      await deleteRows(0.99, 1_000);
+      await deleteRows();
 
       // when
       let caught;
