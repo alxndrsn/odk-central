@@ -3,7 +3,7 @@ services:
     build:
       context: ../..
       dockerfile: postgres14.dockerfile
-    shm_size: 1k
+    shm_size: 10k
     # Couldn't get it working in GHA without host network-mode )¬;
     # FIXME not ideal, as it complicates running locally.
     network_mode: host
