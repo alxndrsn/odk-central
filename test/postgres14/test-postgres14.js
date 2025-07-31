@@ -46,13 +46,15 @@ describe('postgres14', () => {
     }
 
     async function deleteRows(deleteProportion) {
-      const totalRows = await client.query(`SELECT COUNT(*) FROM ${table}`);
-      console.log('deleteRows()', 'totalRows:', totalRows);
+      const { rows } = await client.query(`SELECT COUNT(*) FROM ${table}`);
+      const { count } = rows[0];
+      console.log('deleteRows()', 'count:', count);
 
       const batchSize = 100;
 
-      for(let i=0; i<totalRows; i+=batchSize) {
+      for(let i=0; i<count; i+=batchSize) {
         const query = `DELETE FROM ${table} WHERE id>=$? AND id <= $?`;
+        console.log('Deleteing:', query);
         await client.query(
           query,
           [ i, i + Math.floor(batchSize * deleteProportion) ],
