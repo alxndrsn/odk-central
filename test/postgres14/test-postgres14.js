@@ -19,7 +19,7 @@ describe('postgres14', () => {
       await client.connect();
 
       console.log('beforeEach()', 'maintenance_work_mem:', await client.query(`SELECT current_setting('maintenance_work_mem')`));
-      console.log('beforeEach()', 'maintenance_work_mem:', await client.query(`SELECT current_setting('max_parallel_maintenance_workers')`));
+      console.log('beforeEach()', 'max_parallel_maintenance_workers:', await client.query(`SELECT current_setting('max_parallel_maintenance_workers')`));
       await client.query(`ALTER SYSTEM SET max_parallel_maintenance_workers = 8`);
 
       await client.query(`
