@@ -11,7 +11,7 @@ describe('postgres14', () => {
 
     beforeEach(async () => {
       client = new Client({
-        host: 'localhost',
+        host: '0.0.0.0',
         port: 5432,
         user: 'odk',
         password: 'odk',
