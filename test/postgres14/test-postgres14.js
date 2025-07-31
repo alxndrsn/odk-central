@@ -86,7 +86,7 @@ describe('postgres14', () => {
       this.timeout(100_000); // TODO make this double a reasonable run on CI
 
       // given
-      await rowsExist(1_000_000_000); // TODO make this as low as possible to fail on CI
+      await rowsExist(1_000_000); // TODO make this as low as possible to fail on CI
       // and
       await generateChurn();
 
