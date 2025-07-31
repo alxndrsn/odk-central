@@ -88,7 +88,7 @@ describe('postgres14', () => {
         caught = err;
       }
 
-      assert.equal(caught?.message, 'TODO should have thrown a particular error');
+      assert.match(caught?.message, /^ERROR: could not resize shared memory segment ".*" to \d+ bytes: No space left on device$/);
     });
   });
 });
