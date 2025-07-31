@@ -30,7 +30,7 @@ log "Starting test services..."
 docker_compose up --build --detach
 
 log "Waiting for postgres..."
-wait_for_postgres_response 30 5432
+wait_for_postgres_response 300 5432
 
 npm run test:postgres14
 
