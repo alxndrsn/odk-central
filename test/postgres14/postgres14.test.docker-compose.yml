@@ -7,8 +7,6 @@ services:
     network_mode: host
     volumes:
       - postgres14:/var/lib/odk/postgresql/14
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
