@@ -51,11 +51,11 @@ describe('postgres14', () => {
       await client.query(`
         INSERT INTO ${table} (data, value1, value2, value3, value4, value5)
           SELECT md5(RANDOM()::TEXT)
-                 (RANDOM() * 100000)::INTEGER
-                 (RANDOM() * 100000)::INTEGER
-                 (RANDOM() * 100000)::INTEGER
-                 (RANDOM() * 100000)::INTEGER
-                 (RANDOM() * 100000)::INTEGER
+               , (RANDOM() * 100000)::INTEGER
+               , (RANDOM() * 100000)::INTEGER
+               , (RANDOM() * 100000)::INTEGER
+               , (RANDOM() * 100000)::INTEGER
+               , (RANDOM() * 100000)::INTEGER
           FROM GENERATE_SERIES(1, $1)
         `,
         [ rows ],
