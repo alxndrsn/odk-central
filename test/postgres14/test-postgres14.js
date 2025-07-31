@@ -5,7 +5,6 @@ const { Client } = require('pg');
 describe('postgres14', () => {
   describe('VACUUM', () => {
     const table = 'vac_test_table';
-    const dataLen = 100;
 
     let client;
 
