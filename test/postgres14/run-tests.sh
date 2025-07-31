@@ -35,8 +35,9 @@ docker_compose exec postgres14 bash -c '
 
 log "Marking pg14 upgrade as complete..."
 docker_compose exec postgres14 bash -c '
-  mkdir -p /var/lib/postgresql/14/data &&
-  touch /var/lib/odk/postgresql/14/.postgres14-upgrade-successful
+  set -e
+  mkdir -p $PGDATA
+  touch "$PGDATA/../.postgres14-upgrade-successful"
 '
 
 log "Waiting for postgres..."
