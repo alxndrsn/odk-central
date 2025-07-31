@@ -27,7 +27,6 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: 22.16.0
-    - run: mkdir -p /var/lib/postgresql/14/data && touch /var/lib/postgresql/14/.postgres14-upgrade-successful
     - run: cd test/postgres14 && npm i
     - run: cd test/postgres14 && npm run lint
     - run: cd test/postgres14 && ./run-tests.sh
