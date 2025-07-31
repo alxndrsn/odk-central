@@ -22,10 +22,24 @@ describe('postgres14', () => {
 
       await client.query(`
         DROP TABLE IF EXISTS ${table};
-        CREATE TABLE ${table} (
-          id SERIAL PRIMARY KEY,
-          data INTEGER
-        );
+
+				CREATE TABLE ${table} (
+						id SERIAL PRIMARY KEY,
+						data TEXT,
+						value1 INT,
+						value2 INT,
+						value3 INT,
+						value4 INT,
+						value5 INT
+				);
+
+				CREATE INDEX idx_force_shm_v_1 ON ${table} (value1);
+				CREATE INDEX idx_force_shm_v_2 ON ${table} (value2);
+				CREATE INDEX idx_force_shm_v_3 ON ${table} (value3);
+				CREATE INDEX idx_force_shm_v_4 ON ${table} (value4);
+				CREATE INDEX idx_force_shm_v_5 ON ${table} (value5);
+
+				ALTER SYSTEM SET max_parallel_maintenance_workers = 8;
       `);
     });
 
@@ -34,22 +48,35 @@ describe('postgres14', () => {
     });
 
     async function rowsExist(rows) {
-      await client.query(`INSERT INTO ${table} (data) SELECT GENERATE_SERIES(1, $1)`, [ rows ]);
+      await client.query(`
+				INSERT INTO ${table} (data, value1, value2, value3, value4, value5)
+					SELECT md5(RANDOM()::TEXT)
+								 (RANDOM() * 100000)::INTEGER
+								 (RANDOM() * 100000)::INTEGER
+								 (RANDOM() * 100000)::INTEGER
+								 (RANDOM() * 100000)::INTEGER
+								 (RANDOM() * 100000)::INTEGER
+					FROM GENERATE_SERIES(1, $1)
+				`,
+				[ rows ],
+			);
     }
 
-    async function deleteRows() {
+    async function generateChurn() {
       await client.query(`DELETE FROM ${table} WHERE data % 2 = 0`);
+	    await client.query(`UPDATE ${table} SET value1 = value1 + 1 WHERE id % 3 = 0`);
+	    await client.query(`UPDATE ${table} SET value2 = value2 + 1 WHERE id % 5 = 0`);
     }
 
     async function vacuum() {
-      console.log(`vac:`, await client.query(`VACUUM VERBOSE ${table}`));
+      console.log(`vac:`, await client.query(`VACUUM (VERBOSE, PARALLEL 2) ${table}`));
     }
 
     it('should succeed with ___ pages to update', async () => {
       // given
       await rowsExist(500);
       // and
-      await deleteRows();
+      await generateChurn();
 
       // when
       await vacuum();
@@ -61,7 +88,7 @@ describe('postgres14', () => {
       // given
       await rowsExist(1_000_000_000); // TODO make this as low as possible to fail on CI
       // and
-      await deleteRows();
+      await generateChurn();
 
       // when
       let caught;
