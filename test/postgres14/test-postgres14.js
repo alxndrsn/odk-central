@@ -50,6 +50,7 @@ describe('postgres14', () => {
       console.log('deleteRows()', 'rows:', rows);
       const { count } = rows[0];
       console.log('deleteRows()', 'count:', count);
+      if(count != Math.floor(+count)) throw new Error(`Count not an integer: ${JSON.stringify(count)`);
 
       const batchSize = 100;
 
