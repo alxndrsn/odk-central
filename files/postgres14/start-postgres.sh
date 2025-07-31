@@ -11,7 +11,7 @@ log() {
 
 if ! [[ -f "$flag_upgradeCompletedOk" ]]; then
   log "Waiting for upgrade to complete (flag location: $flag_upgradeCompletedOk)..."
-  while ! [[ -f "$flag_upgradeCompletedOk" ]]; do sleep 1; done
+  while ! [[ -f "$flag_upgradeCompletedOk" ]]; do echo "not yet present"; sleep 1; done
   log "Upgrade complete."
 fi
 
