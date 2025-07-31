@@ -83,7 +83,7 @@ describe('postgres14', () => {
     });
 
     it('should fail with ___ pages to update', async function() {
-      this.timeout(100_000); // TODO make this double a reasonable run on CI
+      this.timeout(30_000); // TODO make this double a reasonable run on CI
 
       // given
       await rowsExist(1_000_000); // TODO make this as low as possible to fail on CI
