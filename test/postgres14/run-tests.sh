@@ -36,6 +36,7 @@ log "Container env:"
 docker_compose exec postgres14 env
 
 log "Marking pg14 upgrade as complete..."
+sleep 5 # is this for fun?  or somehow useful?
 docker_compose exec postgres14 bash -c '
   set -e
   mkdir -p "$PGDATA/.."
