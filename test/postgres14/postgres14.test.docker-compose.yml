@@ -9,3 +9,5 @@ services:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
       POSTGRES_DB: odk
+volumes:
+  postgres14:
