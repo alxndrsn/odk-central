@@ -22,7 +22,7 @@ describe('postgres14', () => {
         DROP TABLE IF EXISTS ${table};
         CREATE TABLE ${table} (
           id SERIAL PRIMARY KEY,
-          data CHAR(${dataLen})
+          data INTEGER
         );
       `);
     });
@@ -32,34 +32,11 @@ describe('postgres14', () => {
     });
 
     async function rowsExist(rows) {
-      const batchSize = 10000;
-
-      for(let i=rows; i>0; i-= batchSize) {
-        const batch = new Array(batchSize);
-
-        for(let j=batchSize-1; j>=0; --j) batch[j] = `${i}:${j}:`.padEnd(dataLen, '');
-
-        await client.query(`
-          INSERT INTO ${table} (data) SELECT JSONB_ARRAY_ELEMENTS_TEXT($1::JSONB)
-        `, [ JSON.stringify(batch) ]);
-      }
+      await client.query(`INSERT INTO ${table} (data) GENERATE_SERIES(1, $1)`, [ rows ]);
     }
 
     async function deleteRows(deleteProportion, batchSize) {
-      const { rows } = await client.query(`SELECT COUNT(*) FROM ${table}`);
-      const { count } = rows[0];
-      if(count != Math.floor(+count)) throw new Error(`Count not an integer: ${JSON.stringify(count)}`);
-      console.log('deleteRows()', 'count:', count);
-
-      for(let i=0; i<count; i+=batchSize) {
-        const query = `DELETE FROM ${table} WHERE id>=$1 AND id <= $2`;
-        const params = [ i, i + Math.floor(batchSize * deleteProportion) ];
-
-        console.log('deleteRows()', 'executing:', { query, params });
-        const { rowCount } = await client.query(query, params);
-
-        if(!rowCount) throw new Error(`No rows deleted by query "${query}"`);
-      }
+      await client.query(`DELETE FROM ${table} WHERE data % 2 = 0`);
     }
 
     it('should succeed with ___ pages to update', async () => {
