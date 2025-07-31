@@ -38,7 +38,7 @@ docker_compose exec postgres14 env
 log "Marking pg14 upgrade as complete..."
 docker_compose exec postgres14 bash -c '
   set -e
-  mkdir -p "$PGDATA"
+  mkdir -p "$PGDATA/.."
   touch "$PGDATA/../.postgres14-upgrade-successful"
 '
 
