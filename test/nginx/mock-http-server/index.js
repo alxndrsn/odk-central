@@ -1,4 +1,5 @@
 const { randomBytes } = require('node:crypto');
+const { Readable } = require('node:stream');
 
 const express = require('express');
 
@@ -40,9 +41,7 @@ app.get('/v1/endless/response', async (req, res) => {
   log('start: openEndlessConnections:', openEndlessConnections);
 
   res.setHeader('Content-Type', 'application/octet-stream');
-  res.setHeader('Transfer-Encoding', 'chunked');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Cache-Control', 'private, no-store');
 
   req.on('close', () => {
     log('req closed');
@@ -50,17 +49,16 @@ app.get('/v1/endless/response', async (req, res) => {
     log('end: openEndlessConnections:', openEndlessConnections);
   });
 
-  //const byteCount = 50_000_000;
-  const chunkSize = 100_000;
-  let chunks = 10;
-  //const byteCount = 100;
-  log('beginning to write', chunkSize*chunks, 'bytes...');
-  do {
-    res.write(randomBytes(chunkSize));
-    await sleep(5);
-  } while(--chunks);
-  res.end();
-  log('write completed.');
+  const byteStream = new RandomByteStream(10_000_000, 50_000);
+  byteStream.pipe(res);
+  byteStream.on('error', (err) => {
+    console.error('stream error:', err);
+    res.end();
+  });
+  byteStream.on('end', () => {
+    console.log(`Successfully streamed ${BYTES_TO_STREAM} bytes.`);
+    res.end();
+  });
 });
 
 app.get('/v1/reflect-headers', (req, res) => res.json(req.headers));
@@ -90,4 +88,27 @@ app.listen(port, () => {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+class RandomByteStream extends Readable {
+  constructor(totalBytes, chunkSize, options) {
+    super(options);
+
+    this.totalBytes = totalBytes;
+    this.bytesGenerated = 0;
+    this.chunkSize = chunkSize;
+  }
+
+  _read(size) {
+    if(this.bytesGenerated >= this.totalBytes) return this.push(null); // done
+
+    try {
+      const bytesToGenerate = Math.min(this.chunkSize, this.totalBytes - this.bytesGenerated);
+      const chunk = randomBytes(bytesToGenerate);
+      const wasPushed = this.push(chunk);
+      if(wasPushed) this.bytesGenerated += chunk.length;
+    } catch (err) {
+      this.destroy(err);
+    }
+  }
 }
