@@ -775,25 +775,30 @@ function createDripReader(path) {
 
   let req;
 
-  return { beginRequest, abort };
+  const _this = { beginRequest, abort };
+  return _this;
 
   function abort() {
     req.destroy();
   }
 
+  function throwFatal(...args) {
+    this._status = 'ended';
+    log('!!! FATAL ERROR:', ...args);
+    process.exit(1);
+  }
+
   function beginRequest() {
-    const options = {
-      hostname: '127.0.0.1',
-      port: 9001,
-      path,
-    };
+    const options = { hostname:'127.0.0.1', port:9001, path };
 
     return new Promise((resolve, reject) => {
       req = https.request(options, res => {
+        _this.status = 'connected';
+
         log(`
           response received:
             status: ${res.statusCode}
-            headers: ${JSON.stringify(res.headers, null, 2).replace(/\n/g, '\n        ')}
+            headers: ${JSON.stringify(res.headers, null, 2).replace(/\n/g, '\n             ')}
         `);
 
         res.on('readable', async () => {
@@ -801,17 +806,17 @@ function createDripReader(path) {
           while(chunk = res.read(10 /* bytes */)) await sleep(100);
         });
 
-        res.on('end', () => {
-          log('!!! FATAL ERROR: request completed before it was killed !!!');
-          process.exit(1);
-        });
+        res.on('end', () => throwFatal('request completed before it was killed!'));
+        res.on('error', err => throwFatal('res threw:', err));
 
-        res.on('error', err => log('res threw:', err)); // TODO this may or may not be expected
+        resolve();
       });
 
       req.on('error', reject);
 
       req.end();
+
+      _this.status = 'started';
     });
   }
 }
