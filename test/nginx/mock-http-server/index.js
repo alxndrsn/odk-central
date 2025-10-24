@@ -28,11 +28,13 @@ app.get('/reset',       (req, res) => {
   res.json('OK');
 });
 
+// TODO these need renaming to e.g. 500kb connections or something
 let openEndlessConnections = 0;
 app.get('/v1/endless/in-progress', (req, res) => {
   res.send(String(openEndlessConnections));
 });
 app.get('/v1/endless/response', (req, res) => {
+  const log = (...args) => console.log(new Date(), '/response', ...args);
   ++openEndlessConnections;
 
   res.setHeader('Content-Type', 'application/octet-stream');
@@ -40,12 +42,15 @@ app.get('/v1/endless/response', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
-  const writer = setInterval(() => res.write(randomBytes(10), 1));
-
   req.on('close', () => {
-    clearInterval(writer);
-    --openEndlessConnections;
+    log('req closed');
+    --openEndlessConnections; // TODO need to handle premature client disconnection?
   });
+
+  const byteCount = 50_000_000;
+  log('beginning to write', byteCount, 'bytes...');
+  res.write(randomBytes(byteCount));
+  log('write completed.');
 });
 
 app.get('/v1/reflect-headers', (req, res) => res.json(req.headers));

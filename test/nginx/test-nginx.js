@@ -595,7 +595,7 @@ describe('nginx config', () => {
 
     it('should not allow a slow-reading client to lock up database connections', async () => {
       // given
-      const connections = Array.from({ length:3 }, () => createDripReader('/v1/endless/response'));
+      const connections = Array.from({ length:3 }, () => createDripReader());
       const assertOpenRequests = expected => assert.equal(connections.filter(c => c.status === 'connected').length, expected);
       // expect
       await assertOpenRequests(0);
@@ -770,7 +770,7 @@ function assertSecurityHeaders(res, { csp }) {
   assert.deepEqual(actualCsp.split('; '), Object.entries(expectedCsp).map(([ k, v ]) => `${k} ${Array.isArray(v) ? v.join(' ') : v}`));
 }
 
-function createDripReader(path) {
+function createDripReader() {
   const reqId = ++lastId;
   const log = (...args) => console.log(`[req:${reqId}]`, ...args);
 
@@ -780,7 +780,7 @@ function createDripReader(path) {
   return _this;
 
   function abort() {
-    req.destroy();
+    req?.destroy();
   }
 
   function throwFatal(...args) {
@@ -790,11 +790,15 @@ function createDripReader(path) {
   }
 
   function beginRequest() {
-    const options = { hostname:'127.0.0.1', port:9001, path };
+    const options = {
+      headers: { host:'odk-nginx.example.test' },
+		};
 
     return new Promise((resolve, reject) => {
-      req = https.request(options, res => {
+      req = https.request('https://127.0.0.1:9001/v1/endless/response', options, res => {
         _this.status = 'connected';
+
+				if(res.statusCode !== 200) return resolve(new Error(`Server returned non-200 status code: ${res.statusCode}`));
 
         log(`
           response received:
@@ -807,7 +811,10 @@ function createDripReader(path) {
         });
 
         res.on('end', () => throwFatal('request completed before it was killed!'));
-        res.on('error', err => throwFatal('res threw:', err));
+        res.on('error', err => {
+					if(err.code === 'ECONNRESET') return; // expected
+					else throwFatal('res threw:', err);
+				});
 
         resolve();
       });
