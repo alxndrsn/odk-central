@@ -49,7 +49,7 @@ app.get('/v1/endless/response', async (req, res) => {
     log('end: openEndlessConnections:', openEndlessConnections);
   });
 
-  const byteCount = 1_000_000;
+  const byteCount = 10_000_000;
   const byteStream = new RandomByteStream(byteCount, 50_000);
   byteStream.pipe(res);
   byteStream.on('error', (err) => {
