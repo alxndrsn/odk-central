@@ -1,3 +1,4 @@
+const https = require('node:https');
 const tls = require('node:tls');
 const { Readable } = require('stream');
 const { assert } = require('chai');
@@ -802,8 +803,7 @@ function createDripReader(path) {
         `);
 
         res.on('readable', async () => {
-          let chunk;
-          while(chunk = res.read(10 /* bytes */)) await sleep(100);
+          while(res.read(10 /* bytes */)) await sleep(100);
         });
 
         res.on('end', () => throwFatal('request completed before it was killed!'));
@@ -819,4 +819,8 @@ function createDripReader(path) {
       _this.status = 'started';
     });
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

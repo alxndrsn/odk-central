@@ -29,10 +29,10 @@ app.get('/reset',       (req, res) => {
 });
 
 let openEndlessConnections = 0;
-app.get('/v1/endless/in-progress', () => {
+app.get('/v1/endless/in-progress', (req, res) => {
   res.send(String(openEndlessConnections));
 });
-app.get('/v1/endless/response', () => {
+app.get('/v1/endless/response', (req, res) => {
   ++openEndlessConnections;
 
   res.setHeader('Content-Type', 'application/octet-stream');
