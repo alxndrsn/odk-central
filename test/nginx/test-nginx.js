@@ -774,17 +774,19 @@ function createDripReader() {
   const reqId = ++lastId;
   const log = (...args) => console.log(`[req:${reqId}]`, ...args);
 
-  let req;
+  let _req, _res;
 
   const _this = { beginRequest, abort };
   return _this;
 
   function abort() {
-    req?.destroy();
+    _req?.destroy();
+    _res?.destroy();
+    _this.status = 'aborted';
   }
 
   function throwFatal(...args) {
-    this._status = 'ended';
+    _this.status = 'ended';
     log('!!! FATAL ERROR:', ...args);
     process.exit(1);
   }
@@ -795,7 +797,8 @@ function createDripReader() {
     };
 
     return new Promise((resolve, reject) => {
-      req = https.request('https://127.0.0.1:9001/v1/endless/response', options, res => {
+      const req = _req = https.request('https://127.0.0.1:9001/v1/endless/response', options, res => {
+        _res = res;
         _this.status = 'connected';
 
         if(res.statusCode !== 200) return resolve(new Error(`Server returned non-200 status code: ${res.statusCode}`));
@@ -807,7 +810,10 @@ function createDripReader() {
         `);
 
         res.on('readable', async () => {
-          while(res.read(10 /* bytes */)) await sleep(100);
+          while(res.read(10 /* bytes */)) {
+            if(_this.status === 'connected') await sleep(100);
+            else return res.read();
+          }
         });
 
         res.on('end', () => throwFatal('request completed before it was killed!'));
