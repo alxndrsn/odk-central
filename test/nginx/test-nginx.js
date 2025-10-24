@@ -579,6 +579,36 @@ describe('nginx config', () => {
       });
     });
   });
+
+  describe('response buffering', () => {
+    // ensure that if a client is reading slowly, then nginx carries the weight of this, rather
+    // than allowing it to impact the full stack from nginx <-> nodejs <-> postgres
+    it('should not allow a slow-reading client to lock up database connections', async () => {
+      // given
+      const connections = Array.from({ length:3 }, createDripReader);
+      // expect
+      await assertOpenRequests(0);
+      await assertOpenBackendConnections(0);
+
+      try {
+        // when
+        await Promise.all(connections.map(c => c.beginRequest()));
+        // then
+        await assertOpenRequests(connections.length);
+        await assertOpenBackendConnections(connections.length);
+
+        // when nginx is given a chance to buffer responses
+        await sleep(100);
+
+        // then backend is free...
+        await assertOpenBackendConnections(0);
+        // ...but nginx is still busy
+        await assertOpenRequests(10);
+      } finally {
+        await Promise.allSettled(connections.map(c => c.abort()));
+      }
+    });
+  });
 });
 
 function fetchHttp(path, options) {
