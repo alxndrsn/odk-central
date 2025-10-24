@@ -89,6 +89,8 @@ const contentSecurityPolicies = {
   },
 };
 
+let lastId = 0;
+
 describe('nginx config', () => {
   beforeEach(() => Promise.all([
     resetEnketoMock(),
@@ -580,12 +582,20 @@ describe('nginx config', () => {
     });
   });
 
-  describe('response buffering', () => {
+  describe.only('response buffering', () => {
     // ensure that if a client is reading slowly, then nginx carries the weight of this, rather
     // than allowing it to impact the full stack from nginx <-> nodejs <-> postgres
+
+    async function assertOpenBackendConnections(expected) {
+      const res = await fetchHttps('/endless/in-progress');
+      const actual = await res.text();
+      assert.equal(actual, expected);
+    }
+
     it('should not allow a slow-reading client to lock up database connections', async () => {
       // given
-      const connections = Array.from({ length:3 }, createDripReader);
+      const connections = Array.from({ length:3 }, () => createDripReader('/endless/response'));
+      const assertOpenRequests = expected => assert.equal(connections.filter(c => c.status === 'connected').length, expected);
       // expect
       await assertOpenRequests(0);
       await assertOpenBackendConnections(0);
@@ -757,4 +767,51 @@ function assertSecurityHeaders(res, { csp }) {
   if(!expectedCsp) assert.fail(`Tried to match unknown CSP '${csp}'`);
   const actualCsp = res.headers.get('Content-Security-Policy-Report-Only');
   assert.deepEqual(actualCsp.split('; '), Object.entries(expectedCsp).map(([ k, v ]) => `${k} ${Array.isArray(v) ? v.join(' ') : v}`));
+}
+
+function createDripReader(path) {
+  const reqId = ++lastId;
+  const log = (...args) => console.log(`[req:${reqId}]`, ...args);
+
+  let req;
+
+  return { beginRequest, abort };
+
+  function abort() {
+    req.destroy();
+  }
+
+  function beginRequest() {
+    const options = {
+      hostname: '127.0.0.1',
+      port: 9001,
+      path,
+    };
+
+    return new Promise((resolve, reject) => {
+      req = https.request(options, res => {
+        log(`
+          response received:
+            status: ${res.statusCode}
+            headers: ${JSON.stringify(res.headers, null, 2).replace(/\n/g, '\n        ')}
+        `);
+
+        res.on('readable', async () => {
+          let chunk;
+          while(chunk = res.read(10 /* bytes */)) await sleep(100);
+        });
+
+        res.on('end', () => {
+          log('!!! FATAL ERROR: request completed before it was killed !!!');
+          process.exit(1);
+        });
+
+        res.on('error', err => log('res threw:', err)); // TODO this may or may not be expected
+      });
+
+      req.on('error', reject);
+
+      req.end();
+    });
+  }
 }
