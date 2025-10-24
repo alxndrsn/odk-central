@@ -49,7 +49,7 @@ app.get('/v1/endless/response', async (req, res) => {
     log('end: openEndlessConnections:', openEndlessConnections);
   });
 
-  const byteCount = 10_000_000;
+  const byteCount = 1_000_000;
   const byteStream = new RandomByteStream(byteCount, 50_000);
   byteStream.pipe(res);
   byteStream.on('error', (err) => {
@@ -97,13 +97,17 @@ class RandomByteStream extends Readable {
   }
 
   _read(size) {
-    if(this.bytesGenerated >= this.totalBytes) return this.push(null); // done
+    const { bytesGenerated, totalBytes, chunkSize } = this;
+
+    if(bytesGenerated >= totalBytes) return this.push(null); // done
 
     try {
-      const bytesToGenerate = Math.min(size, Math.min(this.chunkSize, this.totalBytes - this.bytesGenerated));
+      const bytesToGenerate = Math.min(size, Math.min(chunkSize, totalBytes - bytesGenerated));
+      console.log(new Date(), 'reading:', JSON.stringify({ bytesToGenerate, size, chunkSize, bytesGenerated, totalBytes }).replace(/[{}"]/g, '').replace(/,/g, ', '));
       const chunk = randomBytes(bytesToGenerate);
-      const wasPushed = this.push(chunk);
-      if(wasPushed) this.bytesGenerated += chunk.length;
+      console.log('chunk.length:', chunk.length);
+      this.push(chunk);
+      this.bytesGenerated += chunk.length;
     } catch (err) {
       this.destroy(err);
     }
