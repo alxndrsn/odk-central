@@ -49,14 +49,15 @@ app.get('/v1/endless/response', async (req, res) => {
     log('end: openEndlessConnections:', openEndlessConnections);
   });
 
-  const byteStream = new RandomByteStream(10_000_000, 50_000);
+  const byteCount = 10_000_000;
+  const byteStream = new RandomByteStream(byteCount, 50_000);
   byteStream.pipe(res);
   byteStream.on('error', (err) => {
     console.error('stream error:', err);
     res.end();
   });
   byteStream.on('end', () => {
-    console.log(`Successfully streamed ${BYTES_TO_STREAM} bytes.`);
+    console.log(`Successfully streamed ${byteCount} bytes.`);
     res.end();
   });
 });
@@ -86,10 +87,6 @@ app.listen(port, () => {
   log(`Listening on port: ${port}`);
 });
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 class RandomByteStream extends Readable {
   constructor(totalBytes, chunkSize, options) {
     super(options);
@@ -103,7 +100,7 @@ class RandomByteStream extends Readable {
     if(this.bytesGenerated >= this.totalBytes) return this.push(null); // done
 
     try {
-      const bytesToGenerate = Math.min(this.chunkSize, this.totalBytes - this.bytesGenerated);
+      const bytesToGenerate = Math.min(size, Math.min(this.chunkSize, this.totalBytes - this.bytesGenerated));
       const chunk = randomBytes(bytesToGenerate);
       const wasPushed = this.push(chunk);
       if(wasPushed) this.bytesGenerated += chunk.length;
