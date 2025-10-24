@@ -1,3 +1,5 @@
+const { randomBytes } = require('node:crypto');
+
 const express = require('express');
 
 const port = process.env.PORT || 80;
@@ -24,6 +26,26 @@ app.get('/request-log', (req, res) => res.json(requests));
 app.get('/reset',       (req, res) => {
   requests.length = 0;
   res.json('OK');
+});
+
+let openEndlessConnections = 0;
+app.get('/v1/endless/in-progress', () => {
+  res.send(String(openEndlessConnections));
+});
+app.get('/v1/endless/response', () => {
+  ++openEndlessConnections;
+
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Transfer-Encoding', 'chunked');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const writer = setInterval(() => res.write(randomBytes(10), 1));
+
+  req.on('close', () => {
+    clearInterval(writer);
+    --openEndlessConnections;
+  });
 });
 
 app.get('/v1/reflect-headers', (req, res) => res.json(req.headers));

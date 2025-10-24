@@ -587,14 +587,14 @@ describe('nginx config', () => {
     // than allowing it to impact the full stack from nginx <-> nodejs <-> postgres
 
     async function assertOpenBackendConnections(expected) {
-      const res = await fetchHttps('/endless/in-progress');
+      const res = await fetchHttps('/v1/endless/in-progress');
       const actual = await res.text();
       assert.equal(actual, expected);
     }
 
     it('should not allow a slow-reading client to lock up database connections', async () => {
       // given
-      const connections = Array.from({ length:3 }, () => createDripReader('/endless/response'));
+      const connections = Array.from({ length:3 }, () => createDripReader('/v1/endless/response'));
       const assertOpenRequests = expected => assert.equal(connections.filter(c => c.status === 'connected').length, expected);
       // expect
       await assertOpenRequests(0);
