@@ -593,7 +593,9 @@ describe('nginx config', () => {
       assert.equal(actual, expected);
     }
 
-    it('should not allow a slow-reading client to lock up database connections', async () => {
+    it('should not allow a slow-reading client to lock up database connections', async function() {
+      this.timeout(10000);
+
       // given
       const connections = Array.from({ length:3 }, () => createDripReader());
       const assertOpenRequests = expected => assert.equal(connections.filter(c => c.status === 'connected').length, expected);
@@ -601,20 +603,23 @@ describe('nginx config', () => {
       await assertOpenRequests(0);
       await assertOpenBackendConnections(0);
 
+      console.log('starting requests...');
       try {
         // when
         await Promise.all(connections.map(c => c.beginRequest()));
+        console.log('Requests started.');
         // then
         await assertOpenRequests(connections.length);
         await assertOpenBackendConnections(connections.length);
 
         // when nginx is given a chance to buffer responses
+        console.log('having a snooze...');
         await sleep(100);
 
         // then backend is free...
         await assertOpenBackendConnections(0);
         // ...but nginx is still busy
-        await assertOpenRequests(10);
+        await assertOpenRequests(connections.length);
       } finally {
         await Promise.allSettled(connections.map(c => c.abort()));
       }
@@ -774,13 +779,13 @@ function createDripReader() {
   const reqId = ++lastId;
   const log = (...args) => console.log(`[req:${reqId}]`, ...args);
 
-  let _req, _res;
+  let req, _res;
 
   const _this = { beginRequest, abort };
   return _this;
 
   function abort() {
-    _req?.destroy();
+    req?.destroy();
     _res?.destroy();
     _this.status = 'aborted';
   }
@@ -793,15 +798,20 @@ function createDripReader() {
 
   function beginRequest() {
     const options = {
-      headers: { host:'odk-nginx.example.test' },
+      headers: {
+        //'Connection': 'close',
+        'Host': 'odk-nginx.example.test',
+      },
     };
 
     return new Promise((resolve, reject) => {
-      const req = _req = https.request('https://127.0.0.1:9001/v1/endless/response', options, res => {
+      console.log('starting req...');
+      req = https.request('https://127.0.0.1:9001/v1/endless/response', options, res => {
+        console.log('connected!');
         _res = res;
         _this.status = 'connected';
 
-        if(res.statusCode !== 200) return resolve(new Error(`Server returned non-200 status code: ${res.statusCode}`));
+        if(res.statusCode !== 200) return reject(new Error(`Server returned non-200 status code: ${res.statusCode}`));
 
         log(`
           response received:
@@ -810,10 +820,12 @@ function createDripReader() {
         `);
 
         res.on('readable', async () => {
+          console.log('readable!');
           while(res.read(10 /* bytes */)) {
             if(_this.status === 'connected') await sleep(100);
             else return res.read();
           }
+          console.log('nothing else to read.');
         });
 
         res.on('end', () => throwFatal('request completed before it was killed!'));

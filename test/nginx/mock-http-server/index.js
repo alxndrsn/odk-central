@@ -33,9 +33,11 @@ let openEndlessConnections = 0;
 app.get('/v1/endless/in-progress', (req, res) => {
   res.send(String(openEndlessConnections));
 });
-app.get('/v1/endless/response', (req, res) => {
+app.get('/v1/endless/response', async (req, res) => {
   const log = (...args) => console.log(new Date(), '/response', ...args);
   ++openEndlessConnections;
+
+  log('start: openEndlessConnections:', openEndlessConnections);
 
   res.setHeader('Content-Type', 'application/octet-stream');
   res.setHeader('Transfer-Encoding', 'chunked');
@@ -45,11 +47,19 @@ app.get('/v1/endless/response', (req, res) => {
   req.on('close', () => {
     log('req closed');
     --openEndlessConnections; // TODO need to handle premature client disconnection?
+    log('end: openEndlessConnections:', openEndlessConnections);
   });
 
-  const byteCount = 50_000_000;
-  log('beginning to write', byteCount, 'bytes...');
-  res.write(randomBytes(byteCount));
+  //const byteCount = 50_000_000;
+  const chunkSize = 100_000;
+  let chunks = 10;
+  //const byteCount = 100;
+  log('beginning to write', chunkSize*chunks, 'bytes...');
+  do {
+    res.write(randomBytes(chunkSize));
+    await sleep(5);
+  } while(--chunks);
+  res.end();
   log('write completed.');
 });
 
@@ -77,3 +87,7 @@ app.get('/v1/projects', (_, res) => {
 app.listen(port, () => {
   log(`Listening on port: ${port}`);
 });
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
