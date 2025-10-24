@@ -614,7 +614,7 @@ describe('nginx config', () => {
 
         // when nginx is given a chance to buffer responses
         console.log('having a snooze...');
-        await sleep(1000);
+        await sleep(5000);
 
         // then backend is free...
         await assertOpenBackendConnections(0);
