@@ -792,13 +792,13 @@ function createDripReader() {
   function beginRequest() {
     const options = {
       headers: { host:'odk-nginx.example.test' },
-		};
+    };
 
     return new Promise((resolve, reject) => {
       req = https.request('https://127.0.0.1:9001/v1/endless/response', options, res => {
         _this.status = 'connected';
 
-				if(res.statusCode !== 200) return resolve(new Error(`Server returned non-200 status code: ${res.statusCode}`));
+        if(res.statusCode !== 200) return resolve(new Error(`Server returned non-200 status code: ${res.statusCode}`));
 
         log(`
           response received:
@@ -812,9 +812,9 @@ function createDripReader() {
 
         res.on('end', () => throwFatal('request completed before it was killed!'));
         res.on('error', err => {
-					if(err.code === 'ECONNRESET') return; // expected
-					else throwFatal('res threw:', err);
-				});
+          if(err.code === 'ECONNRESET') return; // expected
+          else throwFatal('res threw:', err);
+        });
 
         resolve();
       });
