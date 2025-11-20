@@ -130,7 +130,7 @@ server {
   }
   # To read single submission cookies
   location = /-/single/check-submitted {
-    try_files $uri @blank.html;
+    try_files @blank.html;
   }
 
   # For that iframe to work, we'll need another path prefix (enketo-passthrough) under which we can
