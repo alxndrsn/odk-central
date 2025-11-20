@@ -130,7 +130,7 @@ server {
   }
   # To read single submission cookies
   location = /-/single/check-submitted {
-    try_files $uri @blank.html;
+    try_files @blank.html =404;
   }
 
   # For that iframe to work, we'll need another path prefix (enketo-passthrough) under which we can
@@ -173,7 +173,7 @@ server {
     include /usr/share/odk/nginx/common-headers.conf;
   }
   location = /blank.html {
-    try_files $uri @blank.html;
+    try_files @blank.html =404;
   }
 
   location / {
