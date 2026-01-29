@@ -21,4 +21,6 @@ jobs:
     - run: ./test/check-docker-context.sh --report
     - run: ./test/test-images.sh
     - if: always()
+      run: docker compose ps
+    - if: always()
       run: docker compose logs
