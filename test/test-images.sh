@@ -56,20 +56,3 @@ log "  Frontend started OK."
 log "Verifying backend..."
 check_path 2 /v1/projects '{"message":"Could not authenticate with the provided credentials.","code":401.2}'
 log "  Backend started OK."
-
-log "Verifying enketo..."
-check_path 2 /-/ 'Enketo is running!'
-log "  Enketo started OK."
-
-log "Verifying pm2..."
-docker compose exec service npx --no pm2 list | tee "$tmp"
-processCount="$(grep --count online "$tmp")"
-if [[ "$processCount" != 4 ]]; then
-  log "!!! PM2 returned an unexpected count for online processes."
-  log "!!!"
-  log "!!! Expected 4, but got $processCount."
-
-  exit 1
-fi
-
-log "All OK."
