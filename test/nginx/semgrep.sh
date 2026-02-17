@@ -20,11 +20,11 @@ rules:
     message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
     severity: WARNING
     patterns:
-      - pattern: add_header $HEADER $VALUE;
+      - pattern: add_header \$HEADER \$VALUE;
       - metavariable-regex:
-          metavariable: $HEADER
+          metavariable: \$HEADER
           regex: ^(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options)$
-      - pattern-not: add_header $HEADER $VALUE always;
+      - pattern-not: add_header \$HEADER \$VALUE always;
 EOF
 
     apt update
