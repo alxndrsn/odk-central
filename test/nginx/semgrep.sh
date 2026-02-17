@@ -20,7 +20,6 @@ rules:
     severity: ERROR
     patterns:
       - pattern-regex: "\\\\badd_header\\\\s+(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)\\\\s+.*"
-      #- pattern-regex: "(?i)^\\\\s*add_header\\\\s+(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)\\\\b"
       - pattern-not-regex: "(?i)add_header\\\\s+.*\\\\balways\\\\b\\\\s*;"
 EOF
 
