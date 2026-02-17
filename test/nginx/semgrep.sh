@@ -26,6 +26,8 @@ rules:
           regex: ^(?i)(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)$
       - pattern-not: add_header \$HEADER \$VALUE always;
     paths:
+			exclude:
+        - ./*
       include:
         - /etc/nginx/conf.d/odk.conf
         - /usr/share/odk/nginx/*
