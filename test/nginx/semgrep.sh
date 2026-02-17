@@ -12,7 +12,6 @@ lint_service() {
   local service="$1"
   log "$service: checking config..."
   docker_compose exec "$service" bash -euc '
-    # TODO generate .semgrep.yml with a heredoc
     cat >.semgrep.yml <<EOF
 rules:
   - id: nginx-add-header-missing-always
