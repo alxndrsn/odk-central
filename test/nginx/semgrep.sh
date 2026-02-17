@@ -20,9 +20,6 @@ rules:
     message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
     severity: ERROR
     paths:
-      exclude:
-        - /*
-        - /**
       include:
         - /etc/nginx/conf.d/odk.conf
         - /usr/share/odk/nginx/*
@@ -45,7 +42,13 @@ EOF
     python3 -m venv .venv
     . .venv/bin/activate
     pip install semgrep
-    semgrep scan --verbose --metrics=off --disable-version-check --no-git-ignore --config p/nginx --config .semgrep.yml
+    semgrep scan --verbose \
+                 --metrics=off \
+                 --disable-version-check \
+                 --no-git-ignore \
+                 --exclude "**/*" \
+                 --config p/nginx \
+                 --config .semgrep.yml
   '
 
   log "$service: config looks OK."
