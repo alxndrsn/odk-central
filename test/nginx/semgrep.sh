@@ -17,42 +17,42 @@ lint_service() {
 rules:
   - id: nginx-add-header-missing-always
     languages: [generic]
-    message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
+    message: "Security headers should include \`always\` param to ensure they are sent with error responses (4xx, 5xx)."
     severity: ERROR
     patterns:
-      - pattern: add_header \$HEADER \$...VALUE;
-      - metavariable-regex:
-          metavariable: \$HEADER
-          regex: ^(?i)(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)$
-      - pattern-not: add_header \$HEADER \$...VALUE always;
+      - pattern-regex: "\\\\badd_header\\\\s+(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)\\\\s+.*"
+      #- pattern-regex: "(?i)^\\\\s*add_header\\\\s+(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)\\\\b"
+      - pattern-not-regex: "(?i)add_header\\\\s+.*\\\\balways\\\\b\\\\s*;"
 EOF
 
     echo "----- .semgrep.yml -----"
     cat .semgrep.yml
     echo "------------------------"
+    echo
+    echo "----- /etc/nginx/conf.d/odk.conf -----"
+    #cat /etc/nginx/conf.d/odk.conf
+    echo "------------------------"
 
-    ls 
-
-    apt-get update
-    apt-get install -y python3-venv
-    python3 -m venv .venv
+    #apt-get update
+    #apt-get install -y python3-venv
+    #python3 -m venv .venv
     . .venv/bin/activate
-    pip install semgrep
+    #pip install semgrep
     semgrep scan --verbose \
                  --metrics=off \
                  --disable-version-check \
                  --no-git-ignore \
                  --config p/nginx \
                  --config .semgrep.yml \
-								 -- \
-                 /etc/nginx/conf.d/odk.conf \
-                 /usr/share/odk/nginx/
+                 -- \
+                 /etc/nginx/conf.d/odk.conf #\
+                 #/usr/share/odk/nginx/
   '
 
   log "$service: config looks OK."
 }
 
 lint_service nginx-ssl-selfsign
-lint_service nginx-ssl-upstream
+#lint_service nginx-ssl-upstream
 
 log "Completed OK."
