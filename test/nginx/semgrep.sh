@@ -16,7 +16,7 @@ lint_service() {
     cat >.semgrep.yml <<EOF
 rules:
   - id: nginx-add-header-missing-always
-    languages: [nginx]
+    languages: [generic]
     message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
     severity: WARNING
     patterns:
@@ -25,11 +25,12 @@ rules:
           metavariable: \$HEADER
           regex: ^(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options)$
       - pattern-not: add_header \$HEADER \$VALUE always;
+    # TODO: paths:
 EOF
 
-		echo "----- .semgrep.yml -----"
-		cat .semgrep.yml
-		echo "------------------------"
+    echo "----- .semgrep.yml -----"
+    cat .semgrep.yml
+    echo "------------------------"
 
     apt update
     apt install -y python3-venv
