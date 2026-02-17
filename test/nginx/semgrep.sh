@@ -23,7 +23,7 @@ rules:
       - pattern: add_header \$HEADER \$VALUE;
       - metavariable-regex:
           metavariable: \$HEADER
-          regex: ^(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options)$
+          regex: ^(?i)(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)$
       - pattern-not: add_header \$HEADER \$VALUE always;
     paths:
       include:
