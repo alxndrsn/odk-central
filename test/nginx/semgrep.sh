@@ -42,11 +42,11 @@ EOF
                  --metrics=off \
                  --disable-version-check \
                  --no-git-ignore \
-                 --exclude "**/*" \
-                 --include "/etc/nginx/conf.d/odk.conf" \
-                 --include "/usr/share/odk/nginx/**" \
                  --config p/nginx \
-                 --config .semgrep.yml
+                 --config .semgrep.yml \
+								 -- \
+                 /etc/nginx/conf.d/odk.conf \
+                 /usr/share/odk/nginx/
   '
 
   log "$service: config looks OK."
