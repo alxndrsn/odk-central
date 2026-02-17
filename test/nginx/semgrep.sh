@@ -13,7 +13,8 @@ lint_service() {
   log "$service: checking config..."
   docker_compose exec "$service" bash -euc '
     # TODO generate .semgrep.yml with a heredoc
-    touch .semgrep.yml
+    cat >.semgrep.yml <<EOF
+EOF
 
     apt update
     apt install -y python3-venv
