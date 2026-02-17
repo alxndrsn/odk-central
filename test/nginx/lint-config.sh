@@ -11,8 +11,6 @@ docker_compose() {
 lint_service() {
   local service="$1"
   log "$service: checking config..."
-  # gixy-ng is a maintained fork of gixy: https://github.com/dvershinin/gixy
-  # For version updates, see: https://pypi.org/project/gixy-ng/#history
   docker_compose exec "$service" bash -euc '
     echo "[lint-config] installing python..."
     apt update
@@ -45,6 +43,8 @@ EOF
                  /etc/nginx/conf.d/odk.conf \
                  /usr/share/odk/nginx/
 
+    # gixy-ng is a maintained fork of gixy: https://github.com/dvershinin/gixy
+    # For version updates, see: https://pypi.org/project/gixy-ng/#history
     echo "[lint-config] installing gixy..."
     pip install gixy-ng==0.2.12
     echo "[lint-config] running gixy..."
