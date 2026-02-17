@@ -44,7 +44,7 @@ EOF
     python3 -m venv .venv
     . .venv/bin/activate
     pip install semgrep
-    semgrep scan --metrics=off --disable-version-check --no-git-ignore --config p/nginx --config .semgrep.yml
+    semgrep scan --verbose --metrics=off --disable-version-check --no-git-ignore --config p/nginx --config .semgrep.yml
   '
 
   log "$service: config looks OK."
