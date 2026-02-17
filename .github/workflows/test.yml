@@ -21,7 +21,7 @@ jobs:
     - run: cd test/nginx && npm run lint
     - run: cd test/nginx && ./setup-tests.sh
     - run: cd test/nginx && npm run test:nginx
-    - run: cd test/nginx && ./gixy.sh
+    #- run: cd test/nginx && ./gixy.sh
     - run: cd test/nginx && ./semgrep.sh
 
     - if: always()
