@@ -37,8 +37,8 @@ EOF
 
     ls 
 
-    apt update
-    apt install -y python3-venv
+    apt-get update
+    apt-get install -y python3-venv
     python3 -m venv .venv
     . .venv/bin/activate
     pip install semgrep
