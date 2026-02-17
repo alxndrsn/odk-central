@@ -43,8 +43,8 @@ EOF
                  --config p/nginx \
                  --config .semgrep.yml \
                  -- \
-                 /etc/nginx/conf.d/odk.conf #\
-                 #/usr/share/odk/nginx/
+                 /etc/nginx/conf.d/odk.conf \
+                 /usr/share/odk/nginx/
   '
 
   log "$service: config looks OK."
