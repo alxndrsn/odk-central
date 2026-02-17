@@ -27,6 +27,10 @@ rules:
       - pattern-not: add_header \$HEADER \$VALUE always;
 EOF
 
+		echo "----- .semgrep.yml -----"
+		cat .semgrep.yml
+		echo "------------------------"
+
     apt update
     apt install -y python3-venv
     python3 -m venv .venv
