@@ -11,7 +11,17 @@ docker_compose() {
 lint_service() {
   local service="$1"
   log "$service: checking config..."
+  # gixy-ng is a maintained fork of gixy: https://github.com/dvershinin/gixy
+  # For version updates, see: https://pypi.org/project/gixy-ng/#history
   docker_compose exec "$service" bash -euc '
+    echo "[lint-config] installing python..."
+    apt update
+    apt install -y python3-venv
+    python3 -m venv .venv
+    . .venv/bin/activate
+
+    echo "[lint-config] installing semgrep..."
+    pip install semgrep
     cat >.semgrep.yml <<EOF
 rules:
   - id: nginx-add-header-missing-always
@@ -22,20 +32,7 @@ rules:
       - pattern-regex: "\\\\badd_header\\\\s+(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options|Content-Security-Policy|Content-Security-Policy-Report-Only)\\\\s+.*"
       - pattern-not-regex: "(?i)add_header\\\\s+.*\\\\balways\\\\b\\\\s*;"
 EOF
-
-    echo "----- .semgrep.yml -----"
-    cat .semgrep.yml
-    echo "------------------------"
-    echo
-    echo "----- /etc/nginx/conf.d/odk.conf -----"
-    #cat /etc/nginx/conf.d/odk.conf
-    echo "------------------------"
-
-    apt-get update
-    apt-get install -y python3-venv
-    python3 -m venv .venv
-    . .venv/bin/activate
-    pip install semgrep
+    echo "[lint-config] running semgrep..."
     semgrep scan --verbose \
                  --error \
                  --metrics=off \
@@ -46,12 +43,19 @@ EOF
                  -- \
                  /etc/nginx/conf.d/odk.conf \
                  /usr/share/odk/nginx/
+
+    echo "[lint-config] installing gixy..."
+    pip install gixy-ng==0.2.12
+    echo "[lint-config] running gixy..."
+    gixy -lll
+
+    echo "[lint-config] All completed OK."
   '
 
   log "$service: config looks OK."
 }
 
 lint_service nginx-ssl-selfsign
-#lint_service nginx-ssl-upstream
+lint_service nginx-ssl-upstream
 
 log "Completed OK."
