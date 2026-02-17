@@ -15,6 +15,10 @@ lint_service() {
     # TODO generate .semgrep.yml with a heredoc
     cat >.semgrep.yml <<EOF
 rules:
+  - id: nginx-add-header-missing-always
+    languages: [generic]
+    message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
+    severity: ERROR
     paths:
       exclude:
         - /*
@@ -22,10 +26,6 @@ rules:
       include:
         - /etc/nginx/conf.d/odk.conf
         - /usr/share/odk/nginx/*
-  - id: nginx-add-header-missing-always
-    languages: [generic]
-    message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
-    severity: ERROR
     patterns:
       - pattern: add_header \$HEADER \$...VALUE;
       - metavariable-regex:
