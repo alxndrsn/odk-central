@@ -19,7 +19,7 @@ lint_service() {
     python3 -m venv .venv
     . .venv/bin/activate
     pip install semgrep
-    semgrep scan --metrics=off --disable-version-check --config .semgrep.yml
+    semgrep scan --metrics=off --disable-version-check --no-git-ignore --config .semgrep.yml
   '
 
   log "$service: config looks OK."
