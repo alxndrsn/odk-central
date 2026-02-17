@@ -18,7 +18,7 @@ rules:
   - id: nginx-add-header-missing-always
     languages: [generic]
     message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
-    severity: WARNING
+    severity: ERROR
     patterns:
       - pattern: add_header \$HEADER \$VALUE;
       - metavariable-regex:
