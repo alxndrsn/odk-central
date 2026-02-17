@@ -35,6 +35,7 @@ EOF
     echo "[lint-config] running semgrep..."
     semgrep scan --verbose \
                  --error \
+                 --severity ERROR \
                  --metrics=off \
                  --disable-version-check \
                  --no-git-ignore \
