@@ -14,6 +14,17 @@ lint_service() {
   docker_compose exec "$service" bash -euc '
     # TODO generate .semgrep.yml with a heredoc
     cat >.semgrep.yml <<EOF
+rules:
+  - id: nginx-add-header-missing-always
+    languages: [nginx]
+    message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
+    severity: WARNING
+    patterns:
+      - pattern: add_header $HEADER $VALUE;
+      - metavariable-regex:
+          metavariable: $HEADER
+          regex: ^(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options)$
+      - pattern-not: add_header $HEADER $VALUE always;
 EOF
 
     apt update
