@@ -25,12 +25,17 @@ rules:
           metavariable: \$HEADER
           regex: ^(Strict-Transport-Security|X-Content-Type-Options|X-Frame-Options)$
       - pattern-not: add_header \$HEADER \$VALUE always;
-    # TODO: paths:
+    paths:
+      include:
+        - /etc/nginx/conf.d/odk.conf
+        - /usr/share/odk/nginx/*
 EOF
 
     echo "----- .semgrep.yml -----"
     cat .semgrep.yml
     echo "------------------------"
+
+    ls 
 
     apt update
     apt install -y python3-venv
