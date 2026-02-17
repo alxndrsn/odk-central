@@ -19,10 +19,6 @@ rules:
     languages: [generic]
     message: "Security headers should include the 'always' parameter to ensure they are sent on error pages (4xx, 5xx)."
     severity: ERROR
-    paths:
-      include:
-        - /etc/nginx/conf.d/odk.conf
-        - /usr/share/odk/nginx/*
     patterns:
       - pattern: add_header \$HEADER \$...VALUE;
       - metavariable-regex:
@@ -47,6 +43,8 @@ EOF
                  --disable-version-check \
                  --no-git-ignore \
                  --exclude "**/*" \
+                 --include "/etc/nginx/conf.d/odk.conf" \
+                 --include "/usr/share/odk/nginx/**" \
                  --config p/nginx \
                  --config .semgrep.yml
   '
