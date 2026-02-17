@@ -37,6 +37,7 @@ EOF
     . .venv/bin/activate
     pip install semgrep
     semgrep scan --verbose \
+                 --error \
                  --metrics=off \
                  --disable-version-check \
                  --no-git-ignore \
