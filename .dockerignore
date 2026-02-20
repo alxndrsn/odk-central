@@ -4,7 +4,6 @@
 
 !/.git/
 !/files/
-!/test/files/
 
 !/client/.browserslistrc
 !/client/.git/
