@@ -51,13 +51,13 @@ docker compose up --detach
 
 log "Verifying version.txt..."
 diff \
-     <(docker_compose exec nginx cat /usr/share/nginx/html/version.txt) \
-     <(cat <<EOF | sed 's/^       //'
-       versions:
-       $(git rev-parse HEAD) ($(git describe --tags))
-        $(cd ../../client && git rev-parse HEAD) client ($(cd ../../client && git describe --tags))
-        $(cd ../../server && git rev-parse HEAD) server ($(cd ../../server && git describe --tags))
-       EOF
+     <(docker compose exec nginx cat /usr/share/nginx/html/version.txt) \
+     <(cat <<EOF
+versions:
+$(git rev-parse HEAD) ($(git describe --tags))
+ $(cd client && git rev-parse HEAD) client ($(cd client && git describe --tags))
+ $(cd server && git rev-parse HEAD) server ($(cd server && git describe --tags))
+EOF
      )
 log "version.txt looks OK."
 
