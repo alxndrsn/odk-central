@@ -57,7 +57,8 @@ versions:
 $(git rev-parse HEAD) ($(git describe --tags))
  $(cd ../../client && git rev-parse HEAD) client ($(cd ../../client && git describe --tags))
  $(cd ../../server && git rev-parse HEAD) server ($(cd ../../server && git describe --tags))
-EOF)
+EOF
+     )
 log "version.txt looks OK."
 
 log "Verifying frontend..."
