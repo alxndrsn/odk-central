@@ -70,4 +70,3 @@ elif [[ $GITHUB_REF_NAME = master ]] || [[ $GITHUB_REF_NAME = next ]]; then
 else
   not_rel "not running in a protected environment."
 fi
-
