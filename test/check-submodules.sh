@@ -11,6 +11,11 @@ not_rel() {
 }
 
 check_submodules() {
+  local actualClientSubmodule
+  local actualServerSubmodule
+  local expectedClientSubmodule
+  local expectedServerSubmodule
+
   actualClientSubmodule="$(git config --get submodule.client.url)"
   actualServerSubmodule="$(git config --get submodule.server.url)"
 
