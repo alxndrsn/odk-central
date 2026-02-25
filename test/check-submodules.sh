@@ -20,6 +20,9 @@ check_submodules() {
   local expectedClientSubmodule
   local expectedServerSubmodule
 
+  git config --get submodule.client.url
+  git config --get submodule.server.url
+
   actualClientSubmodule="$(git config --get submodule.client.url)"
   actualServerSubmodule="$(git config --get submodule.server.url)"
 
