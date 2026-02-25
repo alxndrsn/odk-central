@@ -1,12 +1,8 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 set -o pipefail
 shopt -s inherit_errexit
 
 log() { echo >&2 "[$(basename "$0")] $*"; }
-
-log "----- DEBUG -----"
-cat .gitmodules
-log "-----------------"
 
 not_rel() {
   log "Submodule targets not relevant: $*"
