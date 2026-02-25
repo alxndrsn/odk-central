@@ -20,11 +20,8 @@ check_submodules() {
   local expectedClientSubmodule
   local expectedServerSubmodule
 
-  git config --get submodule.client.url
-  git config --get submodule.server.url
-
-  actualClientSubmodule="$(git config --get submodule.client.url)"
-  actualServerSubmodule="$(git config --get submodule.server.url)"
+  actualClientSubmodule="$(git config --file .gitmodules --get submodule.client.url)"
+  actualServerSubmodule="$(git config --file .gitmodules --get submodule.server.url)"
 
   expectedClientSubmodule=https://github.com/getodk/central-frontend.git
   expectedServerSubmodule=https://github.com/getodk/central-backend.git
