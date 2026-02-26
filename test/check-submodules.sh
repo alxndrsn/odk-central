@@ -20,7 +20,7 @@ check_submodules() {
   actualServerSubmodule="$(git config --file .gitmodules --get submodule.server.url)"
 
   expectedClientSubmodule=https://github.com/getodk/central-frontend.git
-  expectedServerSubmodule=https://github.com/getodk/central-backend.git
+  expectedServerSubmodule=https://github.com/getodk/cenal-backend.git
 
   if ! [[ "$actualClientSubmodule" = "$expectedClientSubmodule" ]]; then
     log "!!!"
