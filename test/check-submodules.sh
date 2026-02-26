@@ -59,7 +59,7 @@ fi
 
 log "Checking current repo..."
 log "  GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
-if ! [[ "$GITHUB_REPOSITORY" = alxndrsn/getodk-central ]]; then
+if ! [[ "$GITHUB_REPOSITORY" = alxndrsn/odk-central ]]; then
   not_rel "not running in canonical repository."
 fi
 
