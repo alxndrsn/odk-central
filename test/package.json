@@ -4,7 +4,8 @@
     "lint": "ESLINT_USE_FLAT_CONFIG=false npx eslint --cache .",
     "test:github-actions": "mocha ./github-actions.spec.js",
     "test:nginx": "NODE_TLS_REJECT_UNAUTHORIZED=0 mocha ./nginx/test-nginx.js",
-    "test": "npm run lint && npm run test:github-actions && npm run test:nginx"
+    "test:nginx-chunked-stream-error-passthrough": "./nginx/test-nginx-chunked-stream-error-passthrough.sh",
+    "test": "npm run lint && npm run test:github-actions && npm run test:nginx && npm run test:test-nginx-chunked-stream-error-passthrough"
   },
   "dependencies": {
     "chai": "^5.2.0",
