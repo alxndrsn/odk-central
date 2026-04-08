@@ -909,21 +909,6 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       resetSentryMock(),
     ]));
 
-    it('POST /csp-report should forward requests to Sentry', async () => {
-      // when
-      const res = await apiFetch('/csp-report', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({ example:1 }),
-      });
-
-      // then
-      assert.equal(res.status, 200);
-      assert.equal(await res.text(), 'OK');
-      // and
-      await assertSentryReceived({ report:{ example:1 } });
-    });
-
     it('POST /csp-report should set original IP for X-Forwarded-For', async () => {
       // when
       const res = await apiFetch('/csp-report', {
@@ -940,6 +925,21 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       assert.equal(actualHeaders.length, 1);
       assert.deepEqual(actualHeaders[0], { TODO:2 });
       assert.equal(actualHeaders[0]['x-forwarded-for'], 'asdf');
+    });
+
+    it('POST /csp-report should forward requests to Sentry', async () => {
+      // when
+      const res = await apiFetch('/csp-report', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ example:1 }),
+      });
+
+      // then
+      assert.equal(res.status, 200);
+      assert.equal(await res.text(), 'OK');
+      // and
+      await assertSentryReceived({ report:{ example:1 } });
     });
 
     describe('Sentry behaviour with unexpected SNI values', () => {
