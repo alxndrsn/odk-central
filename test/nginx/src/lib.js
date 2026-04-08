@@ -8,15 +8,20 @@ const { assert } = chai;
 module.exports = {
   assert,
   assertSentryReceived,
+  getSentryEventLog,
   requestSentryMock,
   resetSentryMock,
 };
 
-async function assertSentryReceived(...expectedRequests) {
+async function getSentryEventLog() {
   const { status, body } = await requestSentryMock({ path:'/event-log' });
   assert.equal(status, 200);
+  return JSON.parse(body);
+}
 
-  const actual = JSON.parse(body);
+async function assertSentryReceived(...expectedRequests) {
+  const eventLog = await getSentryEventLog();
+  const actual = eventLog.map(({ headers, ...rest }) => rest);
 
   try {
     assert.deepEqual(actual, expectedRequests);

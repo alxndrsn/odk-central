@@ -923,6 +923,24 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       await assertSentryReceived({ report:{ example:1 } });
     });
 
+    it('POST /csp-report should set original IP for X-Forwarded-For', async () => {
+      // when
+      const res = await apiFetch('/csp-report', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ example:1 }),
+      });
+
+      // then
+      assert.equal(res.status, 200);
+      assert.equal(await res.text(), 'OK');
+      // and
+      const actualHeaders = (await getSentryEventLog()).map(({ headers }) => headers);
+      assert.equal(actualHeaders.length, 1);
+      assert.deepEqual(actualHeaders, { TODO:2 });
+      assert.equal(actualHeaders[0]['x-forwarded-for'], 'asdf');
+    });
+
     describe('Sentry behaviour with unexpected SNI values', () => {
       // These tests are a control to demonstrate that the local fake Sentry is
       // behaving similarly to sentry.io, which rejects requests which do not

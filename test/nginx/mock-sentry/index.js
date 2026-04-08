@@ -54,7 +54,9 @@ app.post('/api/example-sentry-project/security/', (req, res) => {
     return res.sendStatus(403);
   }
 
-  events.push({ report:req.body });
+  const { headers } = req;
+
+  events.push({ report:req.body, headers });
 
   res.send('OK');
 });
