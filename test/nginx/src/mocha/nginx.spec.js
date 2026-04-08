@@ -929,7 +929,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       const res = await apiFetch('/csp-report', {
         method: 'POST',
         headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({ example:1 }),
+        body: JSON.stringify({ example:2 }),
       });
 
       // then
@@ -938,7 +938,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       // and
       const actualHeaders = (await getSentryEventLog()).map(({ headers }) => headers);
       assert.equal(actualHeaders.length, 1);
-      assert.deepEqual(actualHeaders, { TODO:2 });
+      assert.deepEqual(actualHeaders[0], { TODO:2 });
       assert.equal(actualHeaders[0]['x-forwarded-for'], 'asdf');
     });
 
