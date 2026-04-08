@@ -66,7 +66,7 @@ app.post('/api/example-sentry-project/security/', (req, res) => {
 });
 
 const server = (() => {
-  if(!httpsHost) throw new Error('Env var HTTPS_HOST is required for MODE=https');
+  if(!httpsHost) throw new Error('Env var HTTPS_HOST is required');
 
   const encoding = 'utf8';
 
