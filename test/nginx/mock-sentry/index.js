@@ -52,7 +52,7 @@ app.use('/api', (req, res, next) => {
 });
 app.get('/api/check-cert', (req, res) => res.send('OK'));
 app.post('/api/example-sentry-project/security/', (req, res) => {
-  const { body, headers, query } = req;
+  const { body, headers, query, ip, ips } = req;
 
   const { sentry_key } = query;
   if(sentry_key !== 'example-sentry-key') {
@@ -60,7 +60,7 @@ app.post('/api/example-sentry-project/security/', (req, res) => {
     return res.sendStatus(403);
   }
 
-  events.push({ report:body, headers });
+  events.push({ report:body, headers:{ ...headers, ip, ips } });
 
   res.send('OK');
 });
