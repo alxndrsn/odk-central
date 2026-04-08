@@ -17,6 +17,7 @@ const logErrorEvent = error => {
 };
 
 const app = express();
+app.set('trust proxy', true); // trust X-Forwarded-For header
 app.use((err, req, res, next) => {
   log('[ERROR]', req.method, req.path, res.status, err);
   next(err);
