@@ -17,6 +17,10 @@ const logErrorEvent = error => {
 };
 
 const app = express();
+app.use((err, req, res, next) => {
+  log('[ERROR]', req.method, req.path, res.status, err);
+  next(err);
+});
 app.use(express.json({
   type: [
     'application/json',
@@ -48,19 +52,21 @@ app.use('/api', (req, res, next) => {
 });
 app.get('/api/check-cert', (req, res) => res.send('OK'));
 app.post('/api/example-sentry-project/security/', (req, res) => {
-  const { sentry_key } = req.query;
+  const { body, headers, query } = req;
+
+  const { sentry_key } = query;
   if(sentry_key !== 'example-sentry-key') {
     logErrorEvent(`Bad sentry API key received: '${sentry_key}'`);
     return res.sendStatus(403);
   }
 
-  events.push({ report:req.body });
+  events.push({ report:body, headers });
 
   res.send('OK');
 });
 
 const server = (() => {
-  if(!httpsHost) throw new Error('Env var HTTPS_HOST is required for MODE=https');
+  if(!httpsHost) throw new Error('Env var HTTPS_HOST is required');
 
   const encoding = 'utf8';
 
