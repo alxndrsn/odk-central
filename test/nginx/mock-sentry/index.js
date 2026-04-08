@@ -17,6 +17,10 @@ const logErrorEvent = error => {
 };
 
 const app = express();
+app.use((err, req, res, next) => {
+  log('[ERROR]', req.method, req.path, res.status, err);
+  next(err);
+});
 app.use(express.json({
   type: [
     'application/json',
