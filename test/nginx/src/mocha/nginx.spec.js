@@ -4,6 +4,7 @@ const { Readable } = require('stream');
 const {
   assert,
   assertSentryReceived,
+  getSentryEventLog,
   requestSentryMock,
   resetSentryMock,
 } = require('../lib');
