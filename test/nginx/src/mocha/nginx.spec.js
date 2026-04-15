@@ -42,7 +42,7 @@ const allowGoogleTranslate = ({ 'connect-src':connectSrc, 'img-src':imgSrc, ...o
 
 const contentSecurityPolicies = {
   'backend-unmodified': {
-    codename: 'bu',
+    codename: 'be',
     block: {
       'default-src':     'NOTE:FROM-BACKEND:block',
       'form-action':     'NOTE:FROM-BACKEND:block',
@@ -67,7 +67,7 @@ const contentSecurityPolicies = {
     }),
   },
   'central-frontend': {
-    codename: 'bu', // FIXME deliberate duplicate
+    codename: 'fe',
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
