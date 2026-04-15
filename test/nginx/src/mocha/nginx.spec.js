@@ -14,6 +14,8 @@ const self = `'self'`;
 const unsafeInline = `'unsafe-inline'`;
 const wasmUnsafeEval = `'wasm-unsafe-eval'`;
 
+const fromBackend = Symbol('FROM_BACKEND');
+
 // Central has notifications defined in https://github.com/getodk/central/tree/master/docs, and served from GitHub Pages.  These include:
 //
 // * https://getodk.github.io/central/news.html
@@ -42,17 +44,9 @@ const allowGoogleTranslate = ({ 'connect-src':connectSrc, 'img-src':imgSrc, ...o
 
 const contentSecurityPolicies = {
   'backend-unmodified': {
-    codename: 'be',
-    block: {
-      'default-src':     'NOTE:FROM-BACKEND:block',
-      'form-action':     'NOTE:FROM-BACKEND:block',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:block',
-    },
-    reportOnly: {
-      'default-src':     'NOTE:FROM-BACKEND:reportOnly',
-      'form-action':     'NOTE:FROM-BACKEND:reportOnly',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:reportOnly',
-    },
+    codename: 'XX', // should not occur
+    block: fromBackend,
+    reportOnly: fromBackend,
   },
   'blank-html': {
     codename: 'b0',
@@ -107,11 +101,7 @@ const contentSecurityPolicies = {
   },
   'disallow-all': {
     codename: 'da',
-    block: {
-      'default-src':     'NOTE:FROM-BACKEND:block',
-      'form-action':     'NOTE:FROM-BACKEND:block',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:block',
-    },
+    block: fromBackend,
     reportOnly: {
       'default-src': [
         reportSample,
@@ -123,11 +113,7 @@ const contentSecurityPolicies = {
   },
   enketo: {
     codename: 'ek',
-    block: {
-      'default-src':     'NOTE:FROM-BACKEND:block',
-      'form-action':     'NOTE:FROM-BACKEND:block',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:block',
-    },
+    block: fromBackend,
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
@@ -282,13 +268,14 @@ describe('Content-Security-Policy definitions', () => {
         });
 
         describe(`header: ${headerNames[headerType]}`, () => {
+          if(policy === fromBackend) return;
+
           it(`should have required directives: ${requiredDirectives}`, () => {
             assert.containsAllKeys(policy, requiredDirectives);
           });
 
           Object.entries(policy)
               .map    (([ key, directive ]) => [ key, asArray(directive) ])
-              .filter (([ key, directive ]) => !(directive.length === 1 && directive[0] === `NOTE:FROM-BACKEND:${headerType}`)) // eslint-disable-line no-unused-vars
               .forEach(([ key, directive ]) => {
                 describe(`directive: ${key}`, () => {
                   if(supportsReportSample.includes(key)) {
@@ -1200,6 +1187,8 @@ function assertSecurityHeaders(res, { csp }) {
 }
 
 function assertCsp(actual, policyCodename, expected) {
+  if(expected === fromBackend) return assert.equal(actual, 'NOTE:FROM-BACKEND');
+
   if(!expected) return assert.isNull(actual);
 
   assert.deepEqualInAnyOrder(
