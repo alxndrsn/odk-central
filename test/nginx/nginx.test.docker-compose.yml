@@ -13,7 +13,7 @@ services:
     ports:
       - "8383:8383"
     environment:
-      - CSP_CODENAME=bu
+      - CSP_CODENAME=be
       - PORT=8383
   sentry-mock:
     build:
