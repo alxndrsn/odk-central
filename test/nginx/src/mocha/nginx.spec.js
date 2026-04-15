@@ -265,7 +265,11 @@ describe('Content-Security-Policy definitions', () => {
   for(const [name, policies] of Object.entries(contentSecurityPolicies)) {
     describe(`policy: ${name}`, () => {
       it('should have a short codename string', () => {
-        assert.isString(policies.codename);
+        // given
+        const { codename } = policies;
+
+        // expect
+        assert.isString(codename);
         assert.equal(codename.length, 2);
       });
 
