@@ -1,7 +1,12 @@
 const express = require('express');
 
+const cspCodename = process.env.CSP_CODENAME;
+if(!cspCodename) throw new Error('Missing env var: CSP_CODENAME');
+
 const port = process.env.PORT || 80;
+
 const log = (...args) => console.log('[mock-http-server]', ...args);
+
 
 const requests = [];
 
@@ -16,8 +21,11 @@ app.use((req, res, next) => {
     'form-action',
     'frame-ancestors',
   ];
-  res.set('Content-Security-Policy',             'report-uri=/csp-report?p=bbu; ' + topLevelDirectives.map(d => `${d} NOTE:FROM-BACKEND:block`)     .join('; '));
-  res.set('Content-Security-Policy-Report-Only', 'report-uri=/csp-report?p=rbu; ' + topLevelDirectives.map(d => `${d} NOTE:FROM-BACKEND:reportOnly`).join('; '));
+
+  const mapDirectives = level => topLevelDirectives.map(d => `${d} NOTE:FROM-BACKEND:${level}`).join('; ');
+
+  res.set('Content-Security-Policy',             `report-uri=/csp-report?p=b${cspCodename}; ${mapDirectives('block')}`);
+  res.set('Content-Security-Policy-Report-Only', `report-uri=/csp-report?p=r${cspCodename}; ${mapDirectives('reportOnly')}`);
 
   next();
 });
