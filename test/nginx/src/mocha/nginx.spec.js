@@ -55,7 +55,7 @@ const contentSecurityPolicies = {
     },
   },
   'blank-html': {
-    codename: 'bh',
+    codename: 'b0',
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
