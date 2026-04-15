@@ -55,7 +55,7 @@ const contentSecurityPolicies = {
     },
   },
   'blank-html': {
-    //codename: 'bh', // FIXME deliberately missing
+    codename: 'bh',
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
@@ -259,7 +259,7 @@ describe('Content-Security-Policy definitions', () => {
     const names = Object.values(contentSecurityPolicies).map(p => p.codename);
 
     // expect
-    assert.equal(names.length, new Set(names).size);
+    assert.equal(names.length, new Set(names).size, `Found duplicate Content-Security-Policy codename(s): ${names}`);
   });
 
   for(const [name, policies] of Object.entries(contentSecurityPolicies)) {
