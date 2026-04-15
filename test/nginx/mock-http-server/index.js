@@ -24,8 +24,8 @@ app.use((req, res, next) => {
 
   const mapDirectives = level => topLevelDirectives.map(d => `${d} NOTE:FROM-BACKEND:${level}`).join('; ');
 
-  res.set('Content-Security-Policy',             `report-uri=/csp-report?p=b${cspCodename}; ${mapDirectives('block')}`);
-  res.set('Content-Security-Policy-Report-Only', `report-uri=/csp-report?p=r${cspCodename}; ${mapDirectives('reportOnly')}`);
+  res.set('Content-Security-Policy',             `report-uri /csp-report?p=b${cspCodename}; ${mapDirectives('block')}`);
+  res.set('Content-Security-Policy-Report-Only', `report-uri /csp-report?p=r${cspCodename}; ${mapDirectives('reportOnly')}`);
 
   next();
 });
