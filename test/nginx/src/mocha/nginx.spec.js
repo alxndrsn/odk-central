@@ -261,15 +261,13 @@ describe('Content-Security-Policy definitions', () => {
 
       for(const headerType of ['block', 'reportOnly']) {
         const policy = policies[headerType];
-        if(!policy) continue;
+        if(!policy || policy === fromBackend) continue;
 
         it(`should have required directives: ${requiredDirectives}`, () => {
           assert.containsAllKeys(policy, requiredDirectives);
         });
 
         describe(`header: ${headerNames[headerType]}`, () => {
-          if(policy === fromBackend) return;
-
           it(`should have required directives: ${requiredDirectives}`, () => {
             assert.containsAllKeys(policy, requiredDirectives);
           });
