@@ -48,6 +48,18 @@ const contentSecurityPolicies = {
     block: fromBackend,
     reportOnly: fromBackend,
   },
+  'backend-strict': {
+    codename: 'be',
+    block: fromBackend, // TODO secure this - only explicit backend URLs should come through
+    reportOnly: {
+      'default-src': [
+        reportSample,
+        none,
+      ],
+      'form-action': none,
+      'frame-ancestors': none,
+    },
+  },
   'blank-html': {
     codename: 'b0',
     reportOnly: allowGoogleTranslate({
@@ -98,18 +110,6 @@ const contentSecurityPolicies = {
         'blob:',
       ],
     }),
-  },
-  'disallow-all': {
-    codename: 'da',
-    block: fromBackend,
-    reportOnly: {
-      'default-src': [
-        reportSample,
-        none,
-      ],
-      'form-action': none,
-      'frame-ancestors': none,
-    },
   },
   enketo: {
     codename: 'ek',
@@ -655,7 +655,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
     // then
     assert.equal(res.status, 200);
     assert.equal(await res.text(), 'OK');
-    assertSecurityHeaders(res, { csp:'disallow-all' });
+    assertSecurityHeaders(res, { csp:'backend-strict' });
     // and
     await assertBackendReceived(
       { method:'GET', path:'/v1/some/central-backend/path' },
@@ -677,7 +677,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
     const res = await apiFetch('/v1/reflect-headers');
     // then
     assert.equal(res.status, 200);
-    assertSecurityHeaders(res, { csp:'disallow-all' });
+    assertSecurityHeaders(res, { csp:'backend-strict' });
 
     // when
     const body = await res.json();
@@ -695,7 +695,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
     // then
     assert.equal(res.status, 200);
     // and
-    assertSecurityHeaders(res, { csp:'disallow-all' });
+    assertSecurityHeaders(res, { csp:'backend-strict' });
 
     // when
     const body = await res.json();

@@ -183,7 +183,7 @@ server {
 
   location ~ ^/v\d {
     proxy_hide_header Content-Security-Policy-Report-Only;
-    add_header Content-Security-Policy-Report-Only "default-src 'report-sample' 'none'; form-action 'none'; frame-ancestors 'none'; report-uri /csp-report?p=api" always;
+    add_header Content-Security-Policy-Report-Only "default-src 'report-sample' 'none'; form-action 'none'; frame-ancestors 'none'; report-uri /csp-report?p=rbe" always;
 
     include /usr/share/odk/nginx/common-headers.conf;
     include /usr/share/odk/nginx/backend.conf;
