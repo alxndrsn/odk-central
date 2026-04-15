@@ -42,6 +42,7 @@ const allowGoogleTranslate = ({ 'connect-src':connectSrc, 'img-src':imgSrc, ...o
 
 const contentSecurityPolicies = {
   'backend-unmodified': {
+    codename: 'bu',
     block: {
       'default-src':     'NOTE:FROM-BACKEND:block',
       'form-action':     'NOTE:FROM-BACKEND:block',
@@ -54,6 +55,7 @@ const contentSecurityPolicies = {
     },
   },
   'blank-html': {
+    //codename: 'bh', // FIXME deliberately missing
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
@@ -62,10 +64,10 @@ const contentSecurityPolicies = {
       'form-action': none,
       'frame-ancestors': self,
       'img-src': self, // allow favicon.ico
-      'report-uri':  '/csp-report',
     }),
   },
   'central-frontend': {
+    codename: 'bu', // FIXME deliberate duplicate
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
@@ -101,10 +103,10 @@ const contentSecurityPolicies = {
         reportSample,
         'blob:',
       ],
-      'report-uri':     '/csp-report',
     }),
   },
   'disallow-all': {
+    codename: 'da',
     block: {
       'default-src':     'NOTE:FROM-BACKEND:block',
       'form-action':     'NOTE:FROM-BACKEND:block',
@@ -117,10 +119,10 @@ const contentSecurityPolicies = {
       ],
       'form-action': none,
       'frame-ancestors': none,
-      'report-uri':  '/csp-report',
     },
   },
   enketo: {
+    codename: 'ek',
     block: {
       'default-src':     'NOTE:FROM-BACKEND:block',
       'form-action':     'NOTE:FROM-BACKEND:block',
@@ -178,10 +180,10 @@ const contentSecurityPolicies = {
         'https://fonts.googleapis.com/css',
       ],
       'style-src-attr': unsafeInline,
-      'report-uri': '/csp-report',
     }),
   },
   'web-forms': {
+    codename: 'wf',
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
@@ -224,7 +226,6 @@ const contentSecurityPolicies = {
         reportSample,
         'blob:',
       ],
-      'report-uri': '/csp-report',
     }),
   },
 };
@@ -253,8 +254,21 @@ describe('Content-Security-Policy definitions', () => {
     reportOnly: 'Content-Security-Policy-Report-Only',
   };
 
+  it('should not include duplicate codename values', () => {
+    // given
+    const names = Object.values(contentSecurityPolicies).map(p => p.codename);
+
+    // expect
+    assert.equal(names.length, new Set(names).size);
+  });
+
   for(const [name, policies] of Object.entries(contentSecurityPolicies)) {
     describe(`policy: ${name}`, () => {
+      it('should have a short codename string', () => {
+        assert.isString(policies.codename);
+        assert.equal(codename.length, 2);
+      });
+
       for(const headerType of ['block', 'reportOnly']) {
         const policy = policies[headerType];
         if(!policy) continue;
@@ -1177,16 +1191,19 @@ function assertSecurityHeaders(res, { csp }) {
 
   const expectedCsp = contentSecurityPolicies[csp];
   if(!expectedCsp) assert.fail(`Tried to match unknown CSP '${csp}'`);
-  assertCsp(res.headers.get('Content-Security-Policy'),             expectedCsp.block);
-  assertCsp(res.headers.get('Content-Security-Policy-Report-Only'), expectedCsp.reportOnly);
+  assertCsp(res.headers.get('Content-Security-Policy'),             `b${expectedCsp.codename}`, expectedCsp.block);
+  assertCsp(res.headers.get('Content-Security-Policy-Report-Only'), `r${expectedCsp.codename}`, expectedCsp.reportOnly);
 }
 
-function assertCsp(actual, expected) {
+function assertCsp(actual, policyCodename, expected) {
   if(!expected) return assert.isNull(actual);
 
   assert.deepEqualInAnyOrder(
     actual?.split('; '),
-    Object.entries(expected)
-        .map(([ k, v ]) => `${k} ${asArray(v).join(' ')}`),
+    [
+      ...Object.entries(expected)
+          .map(([ k, v ]) => `${k} ${asArray(v).join(' ')}`),
+      `report-uri /csp-report?p=${policyCodename}`,
+    ],
   );
 }
