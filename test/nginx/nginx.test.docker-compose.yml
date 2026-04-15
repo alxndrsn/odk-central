@@ -5,7 +5,7 @@ services:
     ports:
       - "8005:8005"
     environment:
-      - CSP_CODENAME=ek
+      - CSP_CODENAME=!!
       - PORT=8005
   service:
     build:
