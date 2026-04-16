@@ -17,10 +17,6 @@ const logErrorEvent = error => {
 };
 
 const app = express();
-app.use((req, res, next) => {
-  log(new Date(), req.method, req.originalUrl);
-  next();
-});
 app.use(express.json({
   type: [
     'application/json',
@@ -34,6 +30,8 @@ app.get('/reset',       (req, res) => {
   res.json('OK');
 });
 app.use('/api', (req, res, next) => {
+  log(new Date(), req.method, req.originalUrl);
+
   if(!req.socket.encrypted) fatalError('req.socket.encrypted was falsy');
 
   const certificate = req.socket.getCertificate();
@@ -98,7 +96,7 @@ const server = (() => {
     // See: https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener
     SNICallback: (servername, cb) => {
       if(servername !== httpsHost) {
-        const error = `SNICallback: rejecting unexpected servername: ${servername}; expected: ${httpsHost}`;
+        const error = `SNICallback: rejecting unexpected servername: ${servername}`;
         logErrorEvent(error);
         return cb(new Error(error));
       }

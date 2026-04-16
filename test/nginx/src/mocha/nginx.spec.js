@@ -964,6 +964,8 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
     Object.values(contentSecurityPolicies)
         .map(csp => csp.codename)
         .flatMap(codename => [
+          `/csp/r/${codename}`,
+          `/csp/b/${codename}`,
           `/csp/b/${codename}`,
           `/csp/r/${codename}`,
         ])
