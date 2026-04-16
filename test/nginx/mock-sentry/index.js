@@ -25,9 +25,9 @@ app.use(express.json({
   ],
 }));
 app.get('/event-log', (req, res) => res.json(events));
-app.get('/reset',       (req, res) => {
+app.get('/reset', (req, res) => {
   events.length = 0;
-  res.json('OK');
+  res.json({ 'OK':true });
 });
 app.use('/api', (req, res, next) => {
   log(new Date(), req.method, req.originalUrl);
