@@ -30,12 +30,11 @@ RUN mkdir -p /usr/share/odk/nginx/
 COPY files/nginx/setup-odk.sh \
      files/shared/envsub.awk \
      /scripts/
-
-COPY files/nginx/redirector.conf /usr/share/odk/nginx/
-COPY files/nginx/backend.conf /usr/share/odk/nginx/
-COPY files/nginx/common-headers.conf /usr/share/odk/nginx/
-COPY files/nginx/robots.txt /usr/share/nginx/html
-COPY --from=intermediate client/dist/ /usr/share/nginx/html
-COPY --from=intermediate /tmp/version.txt /usr/share/nginx/html
+COPY files/nginx/nginx-conf/* /usr/share/odk/nginx/
+COPY --from=intermediate \
+    /tmp/version.txt \
+    client/dist/ \
+    /usr/share/nginx/html/
+COPY files/nginx/robots.txt /usr/share/nginx/html/
 
 ENTRYPOINT [ "/scripts/setup-odk.sh" ]

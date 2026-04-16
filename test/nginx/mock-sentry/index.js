@@ -98,7 +98,7 @@ const server = (() => {
     // See: https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener
     SNICallback: (servername, cb) => {
       if(servername !== httpsHost) {
-        const error = `SNICallback: rejecting unexpected servername: ${servername}; exepected: ${httpsHost}`;
+        const error = `SNICallback: rejecting unexpected servername: ${servername}; expected: ${httpsHost}`;
         logErrorEvent(error);
         return cb(new Error(error));
       }

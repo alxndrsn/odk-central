@@ -961,25 +961,28 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       resetSentryMock(),
     ]));
 
-    [
-      '/csp/b/abc',
-      '/csp/r/xyz',
-    ].forEach(path => {
-      it(`POST ${path} should forward requests to Sentry`, async () => {
-        // when
-        const res = await apiFetch(path, {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json' },
-          body: JSON.stringify({ example:1 }),
-        });
+    Object.values(contentSecurityPolicies)
+        .map(csp => csp.codename)
+        .flatMap(codename => [
+          `/csp/b/${codename}`,
+          `/csp/r/${codename}`,
+        ])
+        .forEach(path => {
+          it(`POST ${path} should forward requests to Sentry`, async () => {
+            // when
+            const res = await apiFetch(path, {
+              method: 'POST',
+              headers: { 'Content-Type':'application/json' },
+              body: JSON.stringify({ example:1 }),
+            });
 
-        // then
-        assert.equal(res.status, 200);
-        assert.equal(await res.text(), 'OK');
-        // and
-        await assertSentryReceived({ report:{ example:1 } });
-      });
-    });
+            // then
+            assert.equal(res.status, 200);
+            assert.equal(await res.text(), 'OK');
+            // and
+            await assertSentryReceived({ report:{ example:1 } });
+          });
+        });
 
     describe('Sentry behaviour with unexpected SNI values', () => {
       // These tests are a control to demonstrate that the local fake Sentry is
@@ -1030,7 +1033,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
           assert.isOk(caught);
           assert.equal(caught.code, 'ECONNRESET');
           // and
-          await assertSentryReceived({ error:`SNICallback: rejecting unexpected servername: ${servername}` });
+          await assertSentryReceived({ error:`SNICallback: rejecting unexpected servername: ${servername}; expected: o-fake-dsn.ingest.sentry.io` });
         });
       });
     });

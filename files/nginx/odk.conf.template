@@ -209,9 +209,16 @@ server {
     include /usr/share/odk/nginx/common-headers.conf;
   }
 
-  location /csp/ {
-    rewrite ^/csp/.*$ /api/${SENTRY_PROJECT}/security/?sentry_key=${SENTRY_KEY} break;
-    proxy_pass https://${SENTRY_ORG_SUBDOMAIN}.ingest.sentry.io;
-    proxy_ssl_server_name on;
-  }
+  location = /csp/b/b0  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/b0  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/b/be  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/be  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/b/ek  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/ek  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/b/err { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/err { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/b/fe  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/fe  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/b/wf  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/wf  { include /usr/share/odk/nginx/csp.conf; }
 }

@@ -49,6 +49,10 @@ CERT_DOMAIN=$( [ "$SSL_TYPE" = "customssl" ] && echo "local" || echo "$DOMAIN") 
   < /usr/share/odk/nginx/odk.conf.template \
   > /etc/nginx/conf.d/odk.conf
 
+/scripts/envsub.awk \
+  < /usr/share/odk/nginx/csp.conf.template \
+  > /usr/share/odk/nginx/csp.conf
+
 if [ "$SSL_TYPE" = "letsencrypt" ]; then
   echo "starting nginx for letsencrypt..."
   /bin/bash /scripts/start_nginx_certbot.sh
