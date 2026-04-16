@@ -209,8 +209,9 @@ server {
     include /usr/share/odk/nginx/common-headers.conf;
   }
 
-  location ~ ^/csp/ {
-    proxy_pass https://${SENTRY_ORG_SUBDOMAIN}.ingest.sentry.io/api/${SENTRY_PROJECT}/security/?sentry_key=${SENTRY_KEY};
+  location /csp/ {
+    rewrite ^/csp/.*$ /api/${SENTRY_PROJECT}/security/?sentry_key=${SENTRY_KEY} break;
+    proxy_pass https://${SENTRY_ORG_SUBDOMAIN}.ingest.sentry.io;
     proxy_ssl_server_name on;
   }
 }

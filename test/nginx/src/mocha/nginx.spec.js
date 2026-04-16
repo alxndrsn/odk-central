@@ -1200,7 +1200,7 @@ function assertCsp(actual, policyType, policy) {
     [
       ...Object.entries(expected)
           .map(([ k, v ]) => `${k} ${asArray(v).join(' ')}`),
-      `report-uri /csp/${policyType.charAt(0)}/${policyCodename}`,
+      `report-uri /csp/${policyType.charAt(0)}/${policy.codename}`,
     ],
   );
 }
