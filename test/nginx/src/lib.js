@@ -29,7 +29,6 @@ async function assertSentryReceived(...expectedRequests) {
 async function resetSentryMock() {
   const res = await requestSentryMock({ path:'/reset' });
   assert.equal(res.status, 200);
-  await new Promise(resolve => setTimeout(resolve, 100));
 }
 
 // This function makes DIRECT requests to sentry-mock.  IRL these requests
@@ -45,7 +44,7 @@ function requestSentryMock(opts) {
 
   return new Promise((resolve, reject) => {
     const req = https.request(
-      { path, servername, agent:false, headers:{ Connection:'close' } },
+      { path, servername },
       res => {
         let body = '';
         res.on('data', data => body += data);

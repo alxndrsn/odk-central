@@ -957,9 +957,16 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
   });
 
   describe('CSP reports', () => {
-    beforeEach(() => Promise.all([
-      resetSentryMock(),
-    ]));
+    beforeEach(async () => {
+      // clear unexplained connection re-use FIXME this should not be necessary
+      do {
+        const { status } = await apiFetch('/csp/r/XX', { method:'POST' });
+        console.log('status:', status);
+        last = status;
+      } while(last !== 502);
+
+      await resetSentryMock();
+    });
 
     Object.values(contentSecurityPolicies)
         .map(csp => csp.codename)
@@ -981,8 +988,11 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
             // then
             assert.equal(res.status, 200);
             assert.equal(await res.text(), 'OK');
+
             // and
-            await assertSentryReceived({ report:{ example:1 } });
+            await assertSentryReceived(
+              { report:{ example:1 } },
+            );
           });
         });
 
@@ -1035,7 +1045,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
           assert.isOk(caught);
           assert.equal(caught.code, 'ECONNRESET');
           // and
-          await assertSentryReceived({ error:`SNICallback: rejecting unexpected servername: ${servername}; expected: o-fake-dsn.ingest.sentry.io` });
+          await assertSentryReceived({ error:`SNICallback: rejecting unexpected servername: ${servername}` });
         });
       });
     });

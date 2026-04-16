@@ -2,4 +2,4 @@ proxy_pass https://${SENTRY_ORG_SUBDOMAIN}.ingest.sentry.io/api/${SENTRY_PROJECT
 proxy_ssl_server_name on;
 
 # FIXME remove this - just for confirming theories about connection reuse
-proxy_set_header Connection "close";
+#proxy_set_header Connection "close";
