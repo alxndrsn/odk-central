@@ -27,6 +27,7 @@ app.use(express.json({
 app.get('/event-log', (req, res) => res.json(events));
 app.get('/reset', (req, res) => {
   events.length = 0;
+  res.set('Connection', 'close');
   res.json({ 'OK':true });
 });
 app.use('/api', (req, res, next) => {
@@ -43,6 +44,8 @@ app.use('/api', (req, res, next) => {
     // try to simulate an SNI / connection error
     return req.socket.destroy();
   }
+
+  res.set('Connection', 'close');
 
   next();
 });

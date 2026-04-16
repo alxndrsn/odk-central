@@ -44,7 +44,7 @@ function requestSentryMock(opts) {
 
   return new Promise((resolve, reject) => {
     const req = https.request(
-      { path, servername },
+      { path, servername, agent:false, headers:{ Connection:'close' } },
       res => {
         let body = '';
         res.on('data', data => body += data);
