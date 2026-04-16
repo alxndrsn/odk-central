@@ -961,19 +961,24 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       resetSentryMock(),
     ]));
 
-    it('POST /csp-report should forward requests to Sentry', async () => {
-      // when
-      const res = await apiFetch('/csp-report', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({ example:1 }),
-      });
+    [
+      '/csp/b/abc',
+      '/csp/r/xyz',
+    ].forEach(path => {
+      it(`POST ${path} should forward requests to Sentry`, async () => {
+        // when
+        const res = await apiFetch(path, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({ example:1 }),
+        });
 
-      // then
-      assert.equal(res.status, 200);
-      assert.equal(await res.text(), 'OK');
-      // and
-      await assertSentryReceived({ report:{ example:1 } });
+        // then
+        assert.equal(res.status, 200);
+        assert.equal(await res.text(), 'OK');
+        // and
+        await assertSentryReceived({ report:{ example:1 } });
+      });
     });
 
     describe('Sentry behaviour with unexpected SNI values', () => {
@@ -1180,21 +1185,22 @@ function assertSecurityHeaders(res, { csp }) {
 
   const expectedCsp = contentSecurityPolicies[csp];
   if(!expectedCsp) assert.fail(`Tried to match unknown CSP '${csp}'`);
-  assertCsp(res.headers.get('Content-Security-Policy'),             `b${expectedCsp.codename}`, expectedCsp.block);
-  assertCsp(res.headers.get('Content-Security-Policy-Report-Only'), `r${expectedCsp.codename}`, expectedCsp.reportOnly);
+  assertCsp(res.headers.get('Content-Security-Policy'),             'block',      expectedCsp);
+  assertCsp(res.headers.get('Content-Security-Policy-Report-Only'), 'reportOnly', expectedCsp);
 }
 
-function assertCsp(actual, policyCodename, expected) {
+function assertCsp(actual, policyType, policy) {
+  const expected = policy[policyType];
+  if(!expected) return assert.isNull(actual);
   if(expected === fromBackend) return assert.equal(actual, 'NOTE:FROM-BACKEND');
 
-  if(!expected) return assert.isNull(actual);
 
   assert.deepEqualInAnyOrder(
     actual?.split('; '),
     [
       ...Object.entries(expected)
           .map(([ k, v ]) => `${k} ${asArray(v).join(' ')}`),
-      `report-uri /csp-report?p=${policyCodename}`,
+      `report-uri /csp/${policyType.charAt(0)}/${policyCodename}`,
     ],
   );
 }

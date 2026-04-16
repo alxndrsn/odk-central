@@ -32,7 +32,7 @@ async function resetSentryMock() {
 }
 
 // This function makes DIRECT requests to sentry-mock.  IRL these requests
-// would be performed by nginx when a client POSTs to /csp-report.  This
+// would be performed by nginx when a client POSTs to /csp/...  This
 // function is for used in test setup/assertions, except when confirming the
 // behaviour of the mock Sentry implementation.
 function requestSentryMock(opts) {
