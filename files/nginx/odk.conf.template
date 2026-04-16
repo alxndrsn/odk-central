@@ -221,4 +221,6 @@ server {
   location = /csp/r/fe  { include /usr/share/odk/nginx/csp.conf; }
   location = /csp/b/wf  { include /usr/share/odk/nginx/csp.conf; }
   location = /csp/r/wf  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/b/XX  { include /usr/share/odk/nginx/csp.conf; }
+  location = /csp/r/XX  { include /usr/share/odk/nginx/csp.conf; }
 }
