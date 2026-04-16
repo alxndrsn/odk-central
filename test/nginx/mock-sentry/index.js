@@ -18,12 +18,6 @@ const logErrorEvent = error => {
 };
 
 const app = express();
-app.use((req, res, next) => {
-  //res.setHeader('Connection', 'close');
-  if(!req.socket.___usageCount) req.socket.___usageCount = 0;
-  ++req.socket.___usageCount;
-  next();
-});
 app.use(express.json({
   type: [
     'application/json',
@@ -45,8 +39,7 @@ app.use('/api', (req, res, next) => {
   if(!certificate) fatalError('No certificate found at all.');
 
   const { CN } = certificate.subject;
-  console.log({ CN, usageCount:req.socket.___usageCount });
-  if(CN !== httpsHost && req.socket.___usageCount <= 1) {
+  if(CN !== httpsHost) {
     logErrorEvent(`Server cert had unexpected CN: '${CN}'`);
     // try to simulate an SNI / connection error
     return req.socket.destroy();
@@ -99,7 +92,7 @@ const server = (() => {
   const goodCreds = creds(httpsHost);
 
   const opts = {
-    ...creds('mock-sentry-no-sni-callback'),
+    ...creds('default'),
     // SNICallback is called IFF the client sends an SNI extension in the TLS handshake.
     // See: https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener
     SNICallback: (servername, cb) => {
@@ -110,33 +103,11 @@ const server = (() => {
       }
       cb(null, createSecureContext(goodCreds));
     },
-secureOptions: crypto.constants.SSL_OP_NO_TICKET,
+    secureOptions: crypto.constants.SSL_OP_NO_TICKET,
   };
 
   return createServer(opts, app);
 })();
-
-//server.on('tlsClientError', (err, socket) => {
-//  log('TLS Client Error - Killing Socket to trigger SYSCALL error');
-//  socket.destroy();
-//});
-//
-//server.on('connection', socket => {
-//  log('server::connection', socket);
-//});
-
-const sessionStore = new Map();
-server.on('newSession', (id, data, cb) => {
-  log('server::newSession', { id, data });
-  sessionStore.set(id.toString('hex'), data);
-  cb();
-});
-server.on('resumeSession', (id, cb) => {
-  log('server::resumeSession', { id });
-  const data = sessionStore.get(id.toString('hex'));
-  cb(null, null);
-  //cb(null, data || null);
-});
 
 server.listen(port, () => {
   log(`Listening with HTTPS on port: ${port}`);
