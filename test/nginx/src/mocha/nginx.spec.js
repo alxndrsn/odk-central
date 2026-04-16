@@ -956,7 +956,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
     });
   });
 
-  describe.only('CSP reports', () => {
+  describe('CSP reports', () => {
     beforeEach(async () => {
 //      // clear unexplained connection re-use FIXME this should not be necessary
 //      do {

@@ -1,4 +1,5 @@
 const { execSync } = require('node:child_process');
+const crypto  = require('node:crypto');
 const { readFileSync } = require('node:fs');
 const { createServer } = require('node:https');
 const { createSecureContext } = require('node:tls');
@@ -98,7 +99,7 @@ const server = (() => {
   const goodCreds = creds(httpsHost);
 
   const opts = {
-    ...creds('default'),
+    ...creds('mock-sentry-no-sni-callback'),
     // SNICallback is called IFF the client sends an SNI extension in the TLS handshake.
     // See: https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener
     SNICallback: (servername, cb) => {
@@ -109,6 +110,7 @@ const server = (() => {
       }
       cb(null, createSecureContext(goodCreds));
     },
+secureOptions: crypto.constants.SSL_OP_NO_TICKET,
   };
 
   return createServer(opts, app);
@@ -122,6 +124,19 @@ const server = (() => {
 //server.on('connection', socket => {
 //  log('server::connection', socket);
 //});
+
+const sessionStore = new Map();
+server.on('newSession', (id, data, cb) => {
+  log('server::newSession', { id, data });
+  sessionStore.set(id.toString('hex'), data);
+  cb();
+});
+server.on('resumeSession', (id, cb) => {
+  log('server::resumeSession', { id });
+  const data = sessionStore.get(id.toString('hex'));
+  cb(null, null);
+  //cb(null, data || null);
+});
 
 server.listen(port, () => {
   log(`Listening with HTTPS on port: ${port}`);
