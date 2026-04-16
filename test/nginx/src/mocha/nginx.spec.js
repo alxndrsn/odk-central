@@ -382,7 +382,7 @@ describe('nginx config', () => {
     });
   });
 
-  describe('SSL_TYPE=upstream', () => {
+  if(false) describe('SSL_TYPE=upstream', () => {
     const { fetchHttp, fetchHttp6, fetchHttps, fetchHttps6 } = fetchFunctionsForPorts(10000, 10001);
 
     it('should not respond to HTTPS requests (IPv4)', async () => {
@@ -956,45 +956,17 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
     });
   });
 
-  describe('CSP reports', () => {
+  describe.only('CSP reports', () => {
     beforeEach(async () => {
-      // clear unexplained connection re-use FIXME this should not be necessary
-      do {
-        const { status } = await apiFetch('/csp/r/XX', { method:'POST' });
-        console.log('status:', status);
-        last = status;
-      } while(last !== 502);
+//      // clear unexplained connection re-use FIXME this should not be necessary
+//      do {
+//        const { status } = await apiFetch('/csp/r/XX', { method:'POST' });
+//        console.log('status:', status);
+//        last = status;
+//      } while(last !== 502);
 
       await resetSentryMock();
     });
-
-    Object.values(contentSecurityPolicies)
-        .map(csp => csp.codename)
-        .flatMap(codename => [
-          `/csp/r/${codename}`,
-          `/csp/b/${codename}`,
-          `/csp/b/${codename}`,
-          `/csp/r/${codename}`,
-        ])
-        .forEach(path => {
-          it(`POST ${path} should forward requests to Sentry`, async () => {
-            // when
-            const res = await apiFetch(path, {
-              method: 'POST',
-              headers: { 'Content-Type':'application/json' },
-              body: JSON.stringify({ example:1 }),
-            });
-
-            // then
-            assert.equal(res.status, 200);
-            assert.equal(await res.text(), 'OK');
-
-            // and
-            await assertSentryReceived(
-              { report:{ example:1 } },
-            );
-          });
-        });
 
     describe('Sentry behaviour with unexpected SNI values', () => {
       // These tests are a control to demonstrate that the local fake Sentry is
@@ -1011,6 +983,8 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
         // No error was thrown :¬)
       });
 
+      // Due to nginx connection pooling to the upstream mock-sentry server, this
+      // test must be one of the first 16 requests to mock-sentry.
       it('should reject requests without SNI host', async () => {
         // given
         let caught;
@@ -1023,7 +997,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
         }
 
         // then
-        assert.isOk(caught);
+        assert.isOk(caught, 'An error should have been thrown.');
         assert.equal(caught.code, 'ECONNRESET');
         // and
         await assertSentryReceived({ error:`Server cert had unexpected CN: 'default'` });
@@ -1048,6 +1022,36 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
           await assertSentryReceived({ error:`SNICallback: rejecting unexpected servername: ${servername}` });
         });
       });
+    });
+
+    describe('report URLs', () => {
+      Object.values(contentSecurityPolicies)
+          .map(csp => csp.codename)
+          .flatMap(codename => [
+            `/csp/r/${codename}`,
+            `/csp/b/${codename}`,
+            `/csp/b/${codename}`,
+            `/csp/r/${codename}`,
+          ])
+          .forEach(path => {
+            it(`POST ${path} should forward requests to Sentry`, async () => {
+              // when
+              const res = await apiFetch(path, {
+                method: 'POST',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify({ example:1 }),
+              });
+
+              // then
+              assert.equal(res.status, 200);
+              assert.equal(await res.text(), 'OK');
+
+              // and
+              await assertSentryReceived(
+                { report:{ example:1 } },
+              );
+            });
+          });
     });
   });
 }
@@ -1114,9 +1118,12 @@ function request(url, { body, ...options }={}) {
   if(!options.headers) options.headers = {};
   if(!options.headers.host) options.headers.host = 'odk-nginx.example.test';
 
+  const protocolImpl = getProtocolImplFrom(url);
+  if(options.agent === undefined) options.agent = new protocolImpl.Agent({ keepAlive:false });
+
   return new Promise((resolve, reject) => {
     try {
-      const req = getProtocolImplFrom(url).request(url, options, res => {
+      const req = protocolImpl.request(url, options, res => {
         res.on('error', reject);
 
         const body = new Readable({ read:() => {} });

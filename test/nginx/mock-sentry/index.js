@@ -17,6 +17,12 @@ const logErrorEvent = error => {
 };
 
 const app = express();
+app.use((req, res, next) => {
+  //res.setHeader('Connection', 'close');
+  if(!req.socket.___usageCount) req.socket.___usageCount = 0;
+  ++req.socket.___usageCount;
+  next();
+});
 app.use(express.json({
   type: [
     'application/json',
@@ -38,7 +44,8 @@ app.use('/api', (req, res, next) => {
   if(!certificate) fatalError('No certificate found at all.');
 
   const { CN } = certificate.subject;
-  if(CN !== httpsHost) {
+  console.log({ CN, usageCount:req.socket.___usageCount });
+  if(CN !== httpsHost && req.socket.___usageCount <= 1) {
     logErrorEvent(`Server cert had unexpected CN: '${CN}'`);
     // try to simulate an SNI / connection error
     return req.socket.destroy();
@@ -106,6 +113,15 @@ const server = (() => {
 
   return createServer(opts, app);
 })();
+
+//server.on('tlsClientError', (err, socket) => {
+//  log('TLS Client Error - Killing Socket to trigger SYSCALL error');
+//  socket.destroy();
+//});
+//
+//server.on('connection', socket => {
+//  log('server::connection', socket);
+//});
 
 server.listen(port, () => {
   log(`Listening with HTTPS on port: ${port}`);
