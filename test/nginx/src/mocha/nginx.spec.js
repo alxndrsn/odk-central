@@ -1018,7 +1018,7 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
         }
 
         // then
-        assert.isOk(caught, 'An error should have been thrown.');
+        assert.isOk(caught);
         assert.equal(caught.code, 'ECONNRESET');
         // and
         await assertSentryReceived({ error:`Server cert had unexpected CN: 'default'` });
