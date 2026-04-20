@@ -43,11 +43,6 @@ const allowGoogleTranslate = ({ 'connect-src':connectSrc, 'img-src':imgSrc, ...o
 };
 
 const contentSecurityPolicies = {
-  'backend-unmodified': {
-    codename: 'XX', // should not occur
-    block: fromBackend,
-    reportOnly: fromBackend,
-  },
   'backend-strict': {
     codename: 'be',
     block: fromBackend, // TODO secure this - only explicit backend URLs should come through
@@ -59,6 +54,11 @@ const contentSecurityPolicies = {
       'form-action': none,
       'frame-ancestors': none,
     },
+  },
+  'backend-unmodified': {
+    codename: 'XX', // should not occur
+    block: fromBackend,
+    reportOnly: fromBackend,
   },
   'blank-html': {
     codename: 'b0',
