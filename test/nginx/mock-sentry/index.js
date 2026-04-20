@@ -103,6 +103,7 @@ const server = (() => {
       }
       cb(null, createSecureContext(goodCreds));
     },
+    // Without this setting, nginx pools connections to mock-sentry which are then missing SNI info when re-used.
     secureOptions: crypto.constants.SSL_OP_NO_TICKET,
   };
 
