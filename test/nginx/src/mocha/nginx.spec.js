@@ -828,6 +828,10 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       [ '/fonts/icomoon.ttf',                              'revalidate' ],
       [ '/fonts/icomoon.ttf?',                             'revalidate' ],
       [ '/fonts/icomoon.ttf?ohpk4j',                       'immutable' ],
+
+      // central-backend public images - always requested with timestamp
+      [ '/v1/config/public/hero-image?ts=1776774346923', 'immutable' ],
+      [ '/v1/config/public/logo?ts=1776774376314',       'immutable' ],
     ].forEach(([ path, expectedCacheStrategy ]) => {
       [ 'GET', 'HEAD' ].forEach(method => {
         it(`${method} ${path} should be served with cache strategy: ${expectedCacheStrategy}`, async () => {
