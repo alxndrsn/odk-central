@@ -3,7 +3,14 @@ name: Test, Build, Publish
 on:
   push:
   pull_request:
+  tags: ["v*.*.*"]
   workflow_dispatch:
+    inputs:
+      publish_image:
+        description: 'Publish image to registry?'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   test-misc: # quick, simple checks
@@ -88,12 +95,9 @@ jobs:
       run: docker compose logs
   build-push-image:
     if: |
-      github.event_name == 'workflow_dispatch' || (
-        github.event_name == 'push' && (
-          github.ref == 'refs/heads/master' ||
-          startsWith(github.ref, 'refs/tags/v20')
-        )
-      )
+      (github.event_name == 'workflow_dispatch' && inputs.publish_image == true) ||
+      github.ref == 'refs/heads/master' ||
+      startsWith(github.ref, 'refs/tags/')
     needs:
     - test-images
     runs-on: ubuntu-latest
