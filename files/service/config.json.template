@@ -1,11 +1,11 @@
 {
   "default": {
     "database": {
-      "host": "${DB_HOST}",
-      "user": "${DB_USER}",
-      "password": "${DB_PASSWORD}",
-      "database": "${DB_NAME}",
-      "ssl": ${DB_SSL}
+      "host": "",
+      "user": "",
+      "password": "",
+      "database": "",
+      "maximumPoolSize": ${DB_POOL_SIZE}
     },
     "email": {
       "serviceAccount": "${EMAIL_FROM}",
@@ -21,6 +21,7 @@
         }
       }
     },
+    "sessionLifetime": ${SESSION_LIFETIME},
     "xlsform": {
       "host": "pyxform",
       "port": 80
@@ -43,7 +44,8 @@
       "sentry": {
         "orgSubdomain": "${SENTRY_ORG_SUBDOMAIN}",
         "key": "${SENTRY_KEY}",
-        "project": "${SENTRY_PROJECT}"
+        "project": "${SENTRY_PROJECT}",
+        "traceRate": "${SENTRY_TRACE_RATE}"
       },
       "s3blobStore": {
         "server": "${S3_SERVER}",
