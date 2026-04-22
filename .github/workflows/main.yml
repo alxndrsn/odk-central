@@ -95,7 +95,7 @@ jobs:
   build-push-image:
     if: |
       (github.event_name == 'workflow_dispatch' && inputs.publish_image == true) ||
-      (github.event_name != 'workflow_dispatch' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+      (github.event_name != 'workflow_dispatch' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')))
     needs:
     - test-images
     runs-on: ubuntu-latest
