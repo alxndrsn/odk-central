@@ -43,11 +43,6 @@ const allowGoogleTranslate = ({ 'connect-src':connectSrc, 'img-src':imgSrc, ...o
 const contentSecurityPolicies = {
   'backend-strict': {
     block: {
-      'default-src':     'NOTE:FROM-BACKEND:block',
-      'form-action':     'NOTE:FROM-BACKEND:block',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:block',
-    },
-    reportOnly: {
       'default-src': [
         reportSample,
         none,
