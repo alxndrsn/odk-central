@@ -53,16 +53,8 @@ const contentSecurityPolicies = {
     },
   },
   'backend-unmodified': {
-    block: {
-      'default-src':     'NOTE:FROM-BACKEND:block',
-      'form-action':     'NOTE:FROM-BACKEND:block',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:block',
-    },
-    reportOnly: {
-      'default-src':     'NOTE:FROM-BACKEND:reportOnly',
-      'form-action':     'NOTE:FROM-BACKEND:reportOnly',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:reportOnly',
-    },
+    block:      'NOTE:FROM-BACKEND:block',
+    reportOnly: 'NOTE:FROM-BACKEND:reportOnly',
   },
   'blank-html': {
     reportOnly: allowGoogleTranslate({
@@ -1179,9 +1171,13 @@ function assertSecurityHeaders(res, { csp }) {
 function assertCsp(actual, expected) {
   if(!expected) return assert.isNull(actual);
 
-  assert.deepEqualInAnyOrder(
-    actual?.split('; '),
-    Object.entries(expected)
-        .map(([ k, v ]) => `${k} ${asArray(v).join(' ')}`),
-  );
+  if(typeof expected === 'string') {
+    assert.equal(actual, expected);
+  } else {
+    assert.deepEqualInAnyOrder(
+      actual?.split('; '),
+      Object.entries(expected)
+          .map(([ k, v ]) => `${k} ${asArray(v).join(' ')}`),
+    );
+  }
 }
