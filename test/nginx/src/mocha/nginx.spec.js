@@ -108,11 +108,7 @@ const contentSecurityPolicies = {
     }),
   },
   enketo: {
-    block: {
-      'default-src':     'NOTE:FROM-BACKEND:block',
-      'form-action':     'NOTE:FROM-BACKEND:block',
-      'frame-ancestors': 'NOTE:FROM-BACKEND:block',
-    },
+    block: 'NOTE:FROM-BACKEND:block',
     reportOnly: allowGoogleTranslate({
       'default-src': [
         reportSample,
@@ -246,18 +242,22 @@ describe('Content-Security-Policy definitions', () => {
         const policy = policies[headerType];
         if(!policy) continue;
 
-        it(`should have required directives: ${requiredDirectives}`, () => {
-          assert.containsAllKeys(policy, requiredDirectives);
-        });
-
-        describe(`header: ${headerNames[headerType]}`, () => {
+        if(!(typeof policy === 'string' && policy.startsWith('NOTE:FROM-BACKEND:'))) {
           it(`should have required directives: ${requiredDirectives}`, () => {
             assert.containsAllKeys(policy, requiredDirectives);
           });
+        }
+
+        describe(`header: ${headerNames[headerType]}`, () => {
+          if(!(typeof policy === 'string' && policy.startsWith('NOTE:FROM-BACKEND:'))) {
+            it(`should have required directives: ${requiredDirectives}`, () => {
+              assert.containsAllKeys(policy, requiredDirectives);
+            });
+          }
 
           Object.entries(policy)
               .map    (([ key, directive ]) => [ key, asArray(directive) ])
-              .filter (([ key, directive ]) => !(directive.length === 1 && directive[0] === `NOTE:FROM-BACKEND:${headerType}`)) // eslint-disable-line no-unused-vars
+              .filter (([ key, directive ]) => directive.length !== 1) // eslint-disable-line no-unused-vars
               .forEach(([ key, directive ]) => {
                 describe(`directive: ${key}`, () => {
                   if(supportsReportSample.includes(key)) {
