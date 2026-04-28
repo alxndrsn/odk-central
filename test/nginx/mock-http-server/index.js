@@ -16,6 +16,8 @@ app.use((req, res, next) => {
 app.use('/-/', (req, res, next) => {
   res.set('Vary', 'Accept-Encoding');
   res.set('Cache-Control', 'public, max-age=0');
+  res.set('Content-Security-Policy',             `NOTE:FROM-BACKEND:block`);
+  res.set('Content-Security-Policy-Report-Only', `NOTE:FROM-BACKEND:reportOnly`);
   next();
 });
 
