@@ -35,7 +35,7 @@ app.get('/v1/projects', (_, res) => {
   res.send('OK');
 });
 
-app.get('/v1/oidc/callback', () => {
+app.get('/v1/oidc/callback', (req, res) => {
   res.set('Content-Security-Policy',             `NOTE:FROM-BACKEND:block`);
   res.set('Content-Security-Policy-Report-Only', `NOTE:FROM-BACKEND:reportOnly`);
 
