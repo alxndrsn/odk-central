@@ -9,16 +9,6 @@ const app = express();
 
 app.use((req, res, next) => {
   console.log(new Date(), req.method, req.originalUrl);
-
-  // always set CSP header to detect (or allow) leaks from backend through to the client
-  const topLevelDirectives = [
-    'default-src',
-    'form-action',
-    'frame-ancestors',
-  ];
-  res.set('Content-Security-Policy',             topLevelDirectives.map(d => `${d} NOTE:FROM-BACKEND:block`)     .join('; '));
-  res.set('Content-Security-Policy-Report-Only', topLevelDirectives.map(d => `${d} NOTE:FROM-BACKEND:reportOnly`).join('; '));
-
   next();
 });
 
@@ -42,6 +32,13 @@ app.get('/v1/reflect-headers', (req, res) => res.json(req.headers));
 app.get('/v1/projects', (_, res) => {
   res.set('Vary', 'Cookie');
   res.set('Cache-Control', 'private, max-age=3600');
+  res.send('OK');
+});
+
+app.get('/v1/oidc/callback', () => {
+  res.set('Content-Security-Policy',             `NOTE:FROM-BACKEND:block`);
+  res.set('Content-Security-Policy-Report-Only', `NOTE:FROM-BACKEND:reportOnly`);
+
   res.send('OK');
 });
 
