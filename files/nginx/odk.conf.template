@@ -98,6 +98,7 @@ map $request_uri $central_frontend_csp {
 }
 
 map $upstream_http_content_security_policy $central_backend_csp {
+  // pass through any Content-Security-Policy received from upstream services (central-backend, enketo)
   ""      "default-src 'report-sample' 'none'; form-action 'none'; frame-ancestors 'none'; report-uri /csp-report";
   default $upstream_http_content_security_policy;
 }
