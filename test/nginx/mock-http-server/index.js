@@ -40,6 +40,7 @@ app.get('/v1/projects', (_, res) => {
 });
 
 app.get('/v1/oidc/callback', (req, res) => {
+  // This endpoint is 100% responsible for its own headers.  Set both, and test they both get through.
   res.set('Content-Security-Policy',             `NOTE:FROM-BACKEND:block`);
   res.set('Content-Security-Policy-Report-Only', `NOTE:FROM-BACKEND:reportOnly`);
 
