@@ -252,7 +252,6 @@ describe('Content-Security-Policy definitions', () => {
 
           Object.entries(policy)
               .map    (([ key, directive ]) => [ key, asArray(directive) ])
-              .filter (([ key, directive ]) => directive.length !== 1) // eslint-disable-line no-unused-vars
               .forEach(([ key, directive ]) => {
                 describe(`directive: ${key}`, () => {
                   if(supportsReportSample.includes(key)) {
