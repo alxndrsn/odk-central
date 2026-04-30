@@ -245,7 +245,9 @@ describe('Content-Security-Policy definitions', () => {
         if(!policy) continue;
 
         describe(`header: ${headerNames[headerType]}`, () => {
-          if(!(typeof policy === 'string' && policy.startsWith('NOTE:FROM-BACKEND:'))) {
+          if(typeof policy === 'string') {
+            if(!policy.startsWith('NOTE:FROM-BACKEND:')) throw new Error(`Unexpected policy string: '${policy}'`);
+          } else {
             it(`should have required directives: ${requiredDirectives}`, () => {
               assert.containsAllKeys(policy, requiredDirectives);
             });
