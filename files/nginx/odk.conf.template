@@ -21,7 +21,7 @@ map "$request_method::$uri$is_args$args" $cache_strategy {
   # central-backend
   ~^(GET|HEAD)::/v1/config/public/(hero-image|logo)\?(.*&|)ts=\d+ "immutable";
   ~^(GET|HEAD)::/v1/config/public/(hero-image|logo)(\?|$)         "revalidate";
-  ~^(GET|HEAD)::/v1/                 "passthrough";
+  ~^(GET|HEAD)::/v1/ "passthrough";
 
   # central-frontend - unversioned
   ~^(GET|HEAD)::/$                            "revalidate";
