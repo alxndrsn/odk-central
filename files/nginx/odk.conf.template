@@ -19,6 +19,8 @@ map "$request_method::$uri$is_args$args" $cache_strategy {
   ~^(GET|HEAD)::/version\.txt$        "revalidate";
 
   # central-backend
+  ~^(GET|HEAD)::/v1/config/public/(hero-image|logo)\?(.*&|)ts=\d+ "immutable";
+  ~^(GET|HEAD)::/v1/config/public/(hero-image|logo)(\?|$)         "revalidate";
   ~^(GET|HEAD)::/v1/                 "passthrough";
 
   # central-frontend - unversioned
@@ -37,10 +39,6 @@ map "$request_method::$uri$is_args$args" $cache_strategy {
 
   # central-frontend - versioned
   ~^(GET|HEAD)::/assets/ "immutable";
-
-  # central-backend - special config blobs, requested with timestamp
-  ~^(GET|HEAD)::/config/public/hero-image "immutable";
-  ~^(GET|HEAD)::/config/public/logo       "immutable";
 
   # enketo
   ~^(GET|HEAD)::/-(/x)?/css/                 "revalidate";

@@ -826,14 +826,6 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
       [ '/fonts/icomoon.ttf',                              'revalidate' ],
       [ '/fonts/icomoon.ttf?',                             'revalidate' ],
       [ '/fonts/icomoon.ttf?ohpk4j',                       'immutable' ],
-
-      // central-backend public images - always requested with timestamp
-      // REVIEW it would be great to ensure that immutable headers are only included when a valid `ts` param is included.  Maybe not realistic tho...
-      [ '/v1/config/public/hero-image',                  'revalidate' ],
-      [ '/v1/config/public/hero-image?',                 'revalidate' ],
-      [ '/v1/config/public/hero-image?ts=',              'revalidate' ],
-      [ '/v1/config/public/hero-image?ts=1776774346923', 'immutable' ],
-      [ '/v1/config/public/logo?ts=1776774376314',       'immutable' ],
     ].forEach(([ path, expectedCacheStrategy ]) => {
       [ 'GET', 'HEAD' ].forEach(method => {
         it(`${method} ${path} should be served with cache strategy: ${expectedCacheStrategy}`, async () => {
@@ -854,6 +846,29 @@ function standardTestSuite({ fetchHttp, fetchHttp6, apiFetch, apiFetch6, forward
 
           // then
           assert.equal(res.status, 405);
+        });
+      });
+    });
+  });
+
+  describe('backend config blobs', () => {
+    [
+      // central-backend public images - frontend always requests with timestamp (`ts=...`)
+      [ '/v1/config/public/hero-image',                  'revalidate' ],
+      [ '/v1/config/public/hero-image?',                 'revalidate' ],
+      [ '/v1/config/public/hero-image?ts=',              'revalidate' ],
+      [ '/v1/config/public/hero-image?ts=1776774346923', 'immutable' ],
+      [ '/v1/config/public/logo?ts=1776774376314',       'immutable' ],
+    ].forEach(([ path, expectedCacheStrategy ]) => {
+      [ 'GET', 'HEAD' ].forEach(method => {
+        it(`${method} ${path} should be served with cache strategy: ${expectedCacheStrategy}`, async () => {
+          // when
+          const res = await apiFetch(path, { method });
+
+          // then
+          assert.equal(res.status, 200);
+          // and
+          assertCacheStrategyApplied(res, expectedCacheStrategy);
         });
       });
     });
