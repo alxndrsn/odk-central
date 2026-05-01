@@ -40,7 +40,7 @@ map "$request_method::$uri$is_args$args" $cache_strategy {
 
   # enketo
   ~^(GET|HEAD)::/-(/x)?/css/                 "revalidate";
-  ~^(GET|HEAD)::/-(/x)?/fonts/.*\?v=          "immutable";
+  ~^(GET|HEAD)::/-(/x)?/fonts/.*\?v=         "immutable";
   ~^(GET|HEAD)::/-(/x)?/fonts/               "revalidate";
   ~^(GET|HEAD)::/-(/x)?/images/              "revalidate";
   ~^(GET|HEAD)::/-(/x)?/js/build/chunks/     "immutable";
