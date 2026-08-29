@@ -14,6 +14,13 @@ COPY files/enketo/config.json.template ${ENKETO_SRC_DIR}/config/config.json.temp
 COPY files/enketo/config.json.template ${ENKETO_SRC_DIR}/config/config.json
 COPY files/enketo/start-enketo.sh ${ENKETO_SRC_DIR}/start-enketo.sh
 
+# Fix archived debian repos.
+RUN sed -i \
+        -e 's/deb.debian.org/archive.debian.org/g' \
+        -e 's/security.debian.org/archive.debian.org/g' \
+        -e '/stretch-updates/d' \
+        -e '/buster-updates/d' \
+        /etc/apt/sources.list
 RUN apt-get update; apt-get install gettext-base
 
 EXPOSE 8005
