@@ -2,10 +2,16 @@ FROM node:14.19.3
 
 WORKDIR /usr/odk
 
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ $(grep -oP 'VERSION_CODENAME=\K\w+' /etc/os-release)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list; \
-  wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -; \
+# Fix archived debian repos.
+RUN sed -i \
+        -e 's/deb.debian.org/archive.debian.org/g' \
+        -e 's/security.debian.org/archive.debian.org/g' \
+        -e '/stretch-updates/d' \
+        -e '/buster-updates/d' \
+        /etc/apt/sources.list
+RUN \
   apt-get update; \
-  apt-get install -y cron gettext postgresql-client-9.6
+  apt-get install -y cron gettext
 
 COPY files/service/crontab /etc/cron.d/odk
 
