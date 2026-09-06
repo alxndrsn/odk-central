@@ -34,7 +34,7 @@ log "  Testing: local env with injected var..."
 # note that the environment setting (with `export`) runs in a subshell, and as such doesn't touch our own environment,
 # and as such thus also not the environment with-pgenvblock.pl's is launched with; and thus the PGBLA environment variable
 # that the `env` invocation sees comes from `with-pgenvblock.pl`'s reading of the env block file and nowhere else.
-if files/service/with-pgenvblock.pl <(export PGBLA=hurray; cat /proc/self/environ) env | grep --quiet '^PGBLA=huray$'; then
+if files/service/with-pgenvblock.pl <(export PGBLA=hurray; cat /proc/self/environ) env | grep --quiet '^PGBLA=hurray$'; then
   log "    Passed OK."
 else
   log "    !!! Test failed."
