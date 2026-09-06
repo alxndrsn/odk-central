@@ -29,7 +29,7 @@ else
   exit 1
 fi
 
-log "  Testing: local env with injected var..."
+log "  Testing: local env + an injected var..."
 # for the skeptical reader, on the below:
 # note that the environment setting (with `export`) runs in a subshell, and as such doesn't touch our own environment,
 # and as such thus also not the environment with-pgenvblock.pl's is launched with; and thus the PGBLA environment variable
