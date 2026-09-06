@@ -6,15 +6,7 @@ log() { echo >&2 "[test-with-pgenvblock] $*"; }
 
 log "Testing..."
 
-log "Testing: local env with injected var..."
-# for the skeptical reader, on the below:
-# note that the environment setting (with `export`) runs in a subshell, and as such doesn't touch our own environment,
-# and as such thus also not the environment with-pgenvblock.pl's is launched with; and thus the PGBLA environment variable
-# that the `env` invocation sees comes from `with-pgenvblock.pl`'s reading of the env block file and nowhere else.
-files/service/with-pgenvblock.pl <(export PGBLA=hurray; cat /proc/self/environ) env | grep --quiet '^PGBLA=hurray$' || (printf >&2 "No, it doesn't\n"; false) && printf >&2 "Yes\n"
-log "  Passed OK."
-
-log "Testing: specific postgres-related variables..."
+log "  Testing: specific postgres-related variables..."
 if diff \
     <(
       env --ignore-environment \
@@ -29,11 +21,23 @@ PGDATABASE=4
 EOF
 )
 then
-  log "  Passed OK."
+  log "    Passed OK."
 else
   log "!!!"
   log "!!! Test failed; see above for differences between '< actual' and '> expected'"
   log "!!!"
+  exit 1
+fi
+
+log "  Testing: local env with injected var..."
+# for the skeptical reader, on the below:
+# note that the environment setting (with `export`) runs in a subshell, and as such doesn't touch our own environment,
+# and as such thus also not the environment with-pgenvblock.pl's is launched with; and thus the PGBLA environment variable
+# that the `env` invocation sees comes from `with-pgenvblock.pl`'s reading of the env block file and nowhere else.
+if files/service/with-pgenvblock.pl <(export PGBLA=hurray; cat /proc/self/environ) env | grep --quiet '^PGBLA=huray$'; then
+  log "    Passed OK."
+else
+  log "    !!! Test failed."
   exit 1
 fi
 
