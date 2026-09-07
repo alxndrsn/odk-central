@@ -11,7 +11,10 @@ log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
-log "Checking for flag file at '$flag_upgradeCompletedOk_1' or '$flag_upgradeCompletedOk_2' ..."
+log "Checking for flag file(s) at any of:"
+log "1. '$flag_upgradeCompletedOk_1'"
+log "2. '$flag_upgradeCompletedOk_2'"
+log "3. '$flag_upgradeCompletedOk_3'"
 if ! [[ -f "$flag_upgradeCompletedOk_1" ]] &&
    ! [[ -f "$flag_upgradeCompletedOk_2" ]] &&
    ! [[ -f "$flag_upgradeCompletedOk_3" ]]; then
