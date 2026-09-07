@@ -6,6 +6,7 @@ services:
     shm_size: 512m
     volumes:
       - postgres14:/var/lib/odk/postgresql/14
+      - ./files/postgres14/upgrade:/postgres14-upgrade
     environment:
       POSTGRES_USER: odk
       POSTGRES_PASSWORD: odk
