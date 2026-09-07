@@ -14,6 +14,13 @@ EXPOSE 443
 VOLUME [ "/etc/dh", "/etc/selfsign", "/etc/nginx/conf.d" ]
 ENTRYPOINT [ "/bin/bash", "/scripts/setup-odk.sh" ]
 
+# Fix archived debian repos.
+RUN sed -i \
+        -e 's/deb.debian.org/archive.debian.org/g' \
+        -e 's/security.debian.org/archive.debian.org/g' \
+        -e '/stretch-updates/d' \
+        -e '/buster-updates/d' \
+        /etc/apt/sources.list
 RUN apt-get update && apt-get install -y netcat-openbsd
 
 RUN mkdir -p /usr/share/odk/nginx/
