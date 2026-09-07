@@ -72,7 +72,9 @@ services:
     logging:
       driver: local
   nginx:
-    image: 'tianon/true'
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
     depends_on:
       - service
       - enketo
@@ -94,17 +96,21 @@ services:
       options:
         max-file: "30"
   pyxform:
-    image: 'tianon/true'
+    image: 'ghcr.io/getodk/pyxform-http:v1.12.0'
     restart: always
   secrets:
     volumes:
       - secrets:/etc/secrets
-    image: 'tianon/true'
+    build:
+      context: .
+      dockerfile: secrets.dockerfile
     command: './generate-secrets.sh'
   enketo:
     volumes:
       - secrets:/etc/secrets
-    image: 'tianon/true'
+    build:
+      context: .
+      dockerfile: enketo.dockerfile
     restart: always
     depends_on:
       - secrets
@@ -115,7 +121,7 @@ services:
       - SUPPORT_EMAIL=${SYSADMIN_EMAIL}
       - HTTPS_PORT=${HTTPS_PORT:-443}
   enketo_redis_main:
-    image: 'tianon/true'
+    image: redis:7.0.8
     volumes:
       - ./files/enketo/redis-enketo-main.conf:/usr/local/etc/redis/redis.conf:ro
       - enketo_redis_main:/data
@@ -124,7 +130,7 @@ services:
       - /usr/local/etc/redis/redis.conf
     restart: always
   enketo_redis_cache:
-    image: 'tianon/true'
+    image: redis:7.0.8
     volumes:
       - ./files/enketo/redis-enketo-cache.conf:/usr/local/etc/redis/redis.conf:ro
       - enketo_redis_cache:/data
