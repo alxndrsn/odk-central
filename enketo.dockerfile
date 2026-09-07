@@ -16,10 +16,10 @@ COPY files/enketo/start-enketo.sh ${ENKETO_SRC_DIR}/start-enketo.sh
 
 # Fix archived debian repos.
 RUN sed -i \
-        -e 's/deb.debian.org/archive.debian.org/g' \
-        -e 's/security.debian.org/archive.debian.org/g' \
+        -e '/debian-security/d' \
         -e '/stretch-updates/d' \
         -e '/buster-updates/d' \
+        -e 's/deb.debian.org/archive.debian.org/g' \
         /etc/apt/sources.list
 RUN apt-get update && \
     apt-get install gettext-base
