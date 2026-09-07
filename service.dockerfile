@@ -21,7 +21,7 @@ RUN sed -i \
         /etc/apt/sources.list
 RUN \
   apt-get update && \
-  apt-get install -y cron gettext postgresql-client-14
+  apt-get install -y cron gettext
 
 COPY files/service/crontab /etc/cron.d/odk
 
