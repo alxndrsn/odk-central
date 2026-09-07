@@ -2,18 +2,21 @@
 set -o pipefail
 shopt -s inherit_errexit
 
-flag_upgradeCompletedOk="$PGDATA/../.postgres14-upgrade-successful"
+flag_upgradeCompletedOk_1="$PGDATA/../.postgres14-upgrade-successful"
+flag_upgradeCompletedOk_2="$PGDATA/.postgres14-upgrade-successful"
 
 logPrefix="$(basename "$0")"
 log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
-log "Checking for flag file at '$flag_upgradeCompletedOk' ..."
-if ! [[ -f "$flag_upgradeCompletedOk" ]]; then
-  log "Waiting for upgrade to complete..."
-  while ! [[ -f "$flag_upgradeCompletedOk" ]]; do sleep 1; done
-  log "Upgrade complete."
+log "Checking for flag file at '$flag_upgradeCompletedOk_1' or '$flag_upgradeCompletedOk_2' ..."
+if ! [[ -f "$flag_upgradeCompletedOk_1" ]] &&
+   ! [[ -f "$flag_upgradeCompletedOk_2" ]]; then
+  log "Waiting for upgrade to v14 to complete..."
+  while ! [[ -f "$flag_upgradeCompletedOk_1" ]]; do sleep 1; done
+  touch "$flag_upgradeCompletedOk_2"
+  log "Upgrade to v14 complete."
 fi
 
 log "Starting postgres..."
