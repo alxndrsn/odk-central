@@ -9,6 +9,9 @@ log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
+log "Checking free space..."
+df -h "$PGDATA"
+
 log "Checking for flag file(s)..."
 if ! [[ -f "$flag_upgradeCompletedOk" ]] &&
    ! [[ -f "$PGDATANEW/../.postgres14-upgrade-successful" ]]; then
