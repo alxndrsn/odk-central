@@ -17,7 +17,7 @@ df -i "$PGDATA"
 
 log "Checking for flag file(s)..."
 if ! [[ -f "$flag_upgradeCompletedOk" ]] &&
-   ! [[ -f "$PGDATANEW/../.postgres14-upgrade-successful" ]]; then
+   ! [[ -f "$PGDATA/../.postgres14-upgrade-successful" ]]; then
   log "Waiting for upgrade to v14 to complete..."
   while ! [[ -f "$flag_upgradeCompletedOk" ]]; do sleep 1; done
   log "Upgrade to v14 complete."
