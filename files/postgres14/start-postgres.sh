@@ -35,7 +35,7 @@ ls_dir() {
     log "Type: Soft / Symbolic Link"
 
     local link_target
-    link_dir=$(readlink "$dir")
+    link_dir="$(readlink "$dir")"
     log "Direct Target: $link_target"
 
     if [ -e "$dir" ]; then
@@ -49,14 +49,14 @@ ls_dir() {
     log "Type: Regular File / Hard Link"
 
     local link_count
-    link_count=$(stat -c "%h" "$dir")
+    link_count="$(stat -c "%h" "$dir")"
     local inode
-    inode=$(stat -c "%i" "$dir")
+    inode="$(stat -c "%i" "$dir")"
 
-    if [ "$link_count" -gt 1 ]; then
+    if [[ "$link_count" -gt 1 ]]; then
       log "Warning: $link_count hard links point to inode $inode."
       log "To find sibling hard links, run:"
-      log "  find . -samefile \"$dir\""
+      log "  find . -samefile '$dir'"
     else
       log "Link Count: 1 (No additional hard links exist)"
     fi
