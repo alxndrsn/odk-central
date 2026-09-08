@@ -24,6 +24,9 @@ if ! [[ -f "$flag_upgradeCompletedOk_1" ]] &&
   log "Upgrade to v14 complete."
 fi
 
+log "Debugging PGDATA directory..."
+ls -al "$PGDATA" || true
+
 log "Starting postgres..."
 # call ENTRYPOINT + CMD from parent Docker image
 exec /usr/local/bin/docker-entrypoint.sh postgres "$@"
