@@ -9,9 +9,9 @@ log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
-log "Checking for flag file(s) at any of:"
-log "1. '$flag_upgradeCompletedOk'"
-if ! [[ -f "$flag_upgradeCompletedOk" ]]; then
+log "Checking for flag file(s)..."
+if ! [[ -f "$flag_upgradeCompletedOk" ]] &&
+   ! [[ -f "$PGDATANEW/../.postgres14-upgrade-successful" ]]; then
   log "Waiting for upgrade to v14 to complete..."
   while ! [[ -f "$flag_upgradeCompletedOk" ]]; do sleep 1; done
   log "Upgrade to v14 complete."
