@@ -5,7 +5,7 @@ services:
       dockerfile: postgres14.dockerfile
     shm_size: 512m
     volumes:
-      - postgres14:/var/lib/postgresql/data
+      - postgres14:/var/lib/postgresql
       - ./files/postgres14/upgrade:/postgres14-upgrade
     environment:
       POSTGRES_USER: odk
