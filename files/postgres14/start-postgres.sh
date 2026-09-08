@@ -20,8 +20,16 @@ if ! [[ -f "$flag_upgradeCompletedOk" ]] &&
   log "Upgrade to v14 complete."
 fi
 
-log "Debugging PGDATA directory..."
-ls -al "$PGDATA" || true
+ls_dir() {
+  dir="$1"
+  log "--------- $dir -----------"
+  ls -al "$dir" || true
+  log "--------------------------"
+}
+ls_dir "$PGDATA"
+ls_dir "/var/lib/postgresql"
+ls_dir "/var/lib/postgresql/18"
+ls_dir "/var/lib/postgresql/18/docker"
 
 log "Starting postgres..."
 # call ENTRYPOINT + CMD from parent Docker image
