@@ -30,7 +30,9 @@ ls_dir() {
   stat "$dir" || true
   log
 
-  if [[ -L "$dir" ]]; then
+  if ! [[ -e "$dir" ]]; then
+    log "=== FILE DOES NOT EXIST ==="
+  elif [[ -L "$dir" ]]; then
     log "=== SYMLINK ANALYSIS ==="
     log "Type: Soft / Symbolic Link"
 
