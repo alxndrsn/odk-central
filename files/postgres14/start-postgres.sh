@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 set -o pipefail
 shopt -s inherit_errexit
 
@@ -69,6 +69,7 @@ ls_dir "/var/lib/postgresql"
 ls_dir "/var/lib/postgresql/data"
 ls_dir "/var/lib/postgresql/18"
 ls_dir "/var/lib/postgresql/18/docker"
+ls_dir "/var/lib/odk/postgresql/"
 
 log "Starting postgres..."
 # call ENTRYPOINT + CMD from parent Docker image
