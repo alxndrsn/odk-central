@@ -12,6 +12,9 @@ log() {
 log "Checking free space..."
 df -h "$PGDATA"
 
+log "Checking inodes..."
+df -i "$PGDATA"
+
 log "Checking for flag file(s)..."
 if ! [[ -f "$flag_upgradeCompletedOk" ]] &&
    ! [[ -f "$PGDATANEW/../.postgres14-upgrade-successful" ]]; then
