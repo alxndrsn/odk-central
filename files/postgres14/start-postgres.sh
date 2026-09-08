@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 set -o pipefail
 shopt -s inherit_errexit
 
@@ -30,7 +30,7 @@ ls_dir() {
   stat "$dir" || true
   log
 
-  if [ -L "$dir" ]; then
+  if [[ -L "$dir" ]]; then
     log "=== SYMLINK ANALYSIS ==="
     log "Type: Soft / Symbolic Link"
 
