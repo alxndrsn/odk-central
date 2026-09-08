@@ -25,9 +25,46 @@ ls_dir() {
   log "--------- $dir -----------"
   ls -al "$dir" || true
   log "--------------------------"
+
+  echo "=== FILE METADATA (stat) ==="
+  stat "$target"
+  echo
+
+  if [ -L "$target" ]; then
+    echo "=== SYMLINK ANALYSIS ==="
+    echo "Type: Soft / Symbolic Link"
+
+    local link_target
+    link_target=$(readlink "$target")
+    echo "Direct Target: $link_target"
+
+    if [ -e "$target" ]; then
+      echo "Status: Valid"
+      echo "Canonical Absolute Path: $(readlink -f "$target")"
+    else
+      echo "Status: BROKEN LINK"
+    fi
+  else
+    echo "=== HARD LINK ANALYSIS ==="
+    echo "Type: Regular File / Hard Link"
+
+    local link_count
+    link_count=$(stat -c "%h" "$target")
+    local inode
+    inode=$(stat -c "%i" "$target")
+
+    if [ "$link_count" -gt 1 ]; then
+      echo "Warning: $link_count hard links point to inode $inode."
+      echo "To find sibling hard links, run:"
+      echo "  find . -samefile \"$target\""
+    else
+      echo "Link Count: 1 (No additional hard links exist)"
+    fi
+  fi
 }
 ls_dir "$PGDATA"
 ls_dir "/var/lib/postgresql"
+ls_dir "/var/lib/postgresql/data"
 ls_dir "/var/lib/postgresql/18"
 ls_dir "/var/lib/postgresql/18/docker"
 
