@@ -27,20 +27,20 @@ ls_dir() {
   log "--------------------------"
 
   echo "=== FILE METADATA (stat) ==="
-  stat "$target"
+  stat "$dir"
   echo
 
-  if [ -L "$target" ]; then
+  if [ -L "$dir" ]; then
     echo "=== SYMLINK ANALYSIS ==="
     echo "Type: Soft / Symbolic Link"
 
     local link_target
-    link_target=$(readlink "$target")
+    link_dir=$(readlink "$dir")
     echo "Direct Target: $link_target"
 
-    if [ -e "$target" ]; then
+    if [ -e "$dir" ]; then
       echo "Status: Valid"
-      echo "Canonical Absolute Path: $(readlink -f "$target")"
+      echo "Canonical Absolute Path: $(readlink -f "$dir")"
     else
       echo "Status: BROKEN LINK"
     fi
@@ -49,14 +49,14 @@ ls_dir() {
     echo "Type: Regular File / Hard Link"
 
     local link_count
-    link_count=$(stat -c "%h" "$target")
+    link_count=$(stat -c "%h" "$dir")
     local inode
-    inode=$(stat -c "%i" "$target")
+    inode=$(stat -c "%i" "$dir")
 
     if [ "$link_count" -gt 1 ]; then
       echo "Warning: $link_count hard links point to inode $inode."
       echo "To find sibling hard links, run:"
-      echo "  find . -samefile \"$target\""
+      echo "  find . -samefile \"$dir\""
     else
       echo "Link Count: 1 (No additional hard links exist)"
     fi
