@@ -13,7 +13,16 @@ log() {
 }
 
 log "PGDATAOLD: $PGDATAOLD"
+if ! [[ -d "$PGDATAOLD" ]]; then
+  log "Creating missing $PGDATAOLD directory..."
+  mkdir -p "$PGDATAOLD"
+fi
+
 log "PGDATANEW: $PGDATANEW"
+if ! [[ -d "$PGDATANEW" ]]; then
+  log "Creating missing $PGDATANEW directory..."
+  mkdir -p "$PGDATANEW"
+fi
 
 log "Checking for existing upgrade marker file..."
 if [[ -f "$flag_upgradeCompletedOk" ]]; then
