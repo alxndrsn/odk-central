@@ -12,6 +12,9 @@ log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
+log "PGDATAOLD: $PGDATAOLD"
+log "PGDATANEW: $PGDATANEW"
+
 log "Checking for existing upgrade marker file..."
 if [[ -f "$flag_upgradeCompletedOk" ]]; then
   log "Upgrade has been run previously."
