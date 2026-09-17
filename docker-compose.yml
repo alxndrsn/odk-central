@@ -5,7 +5,7 @@ services:
       dockerfile: pgautoupgrade.dockerfile
     shm_size: 512m
     tmpfs:
-      - /var/lib/postgresql/data:ro # prevent anonymous volume creation; fail when written to
+      - /var/lib/postgresql/data # prevent anonymous volume creation
     volumes:
       - postgres14:/var/lib/postgresql
       - ./files/postgres14/upgrade:/postgres14-upgrade
