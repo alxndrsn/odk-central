@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: postgres14.dockerfile
+    tmpfs:
+      - /var/lib/postgresql/data:ro # prevent anonymous volume creation; fail when written to
     volumes:
       - postgres14:/var/lib/odk/postgresql/14
     environment:
