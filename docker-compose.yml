@@ -5,7 +5,11 @@ services:
       dockerfile: pgautoupgrade.dockerfile
     shm_size: 512m
     volumes:
-      - postgres14:/var/lib/postgresql
+      - type: volume
+        source: postgres14
+        target: /var/lib/postgresql/data
+        volume:
+          subpath: data
       - ./files/postgres14/upgrade:/postgres14-upgrade
     environment:
       POSTGRES_USER: odk
