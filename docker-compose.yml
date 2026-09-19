@@ -17,7 +17,8 @@ services:
       POSTGRES_DB: odk
     restart: always
     depends_on:
-      - postgres
+      postgres:
+        condition: service_completed_successfully
   postgres:
     # This service upgrades from postgres 9.6 to 14.
     # The legacy name must be maintained to allow access to the anonymous volume.
@@ -179,3 +180,8 @@ volumes:
   enketo_redis_cache:
   secrets:
   postgres14:
+    driver: local
+    driver_opts:
+      device: ./files/postgres14/volume-postgres14
+      type: tmpfs
+      o: "size=1m"
