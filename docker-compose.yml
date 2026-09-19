@@ -180,8 +180,3 @@ volumes:
   enketo_redis_cache:
   secrets:
   postgres14:
-    driver: local
-    driver_opts:
-      device: ./files/postgres14/volume-postgres14
-      type: tmpfs
-      o: "size=1m"
