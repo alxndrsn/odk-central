@@ -10,6 +10,7 @@ log() {
 }
 
 log "--- debugging tree ---"
+sudo apt-get install tree
 tree
 log "--- tree completed ---"
 
