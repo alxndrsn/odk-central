@@ -4,7 +4,7 @@ shopt -s inherit_errexit
 
 flag_upgradeCompletedOk="/postgres14-upgrade/upgrade-successful"
 
-logPrefix="$(basename "$0")"
+logPrefix="$(date +%s%N)|$(basename "$0")"
 log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
