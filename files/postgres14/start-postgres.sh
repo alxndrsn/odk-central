@@ -9,6 +9,10 @@ log() {
   echo "$(TZ=GMT date) [$logPrefix] $*"
 }
 
+log "--- debugging tree ---"
+tree
+log "--- tree completed ---"
+
 if ! [[ -f "$flag_upgradeCompletedOk" ]] &&
    ! [[ -f "$PGDATA/../.postgres14-upgrade-successful" ]]; then
   log "Waiting for upgrade to v14 to complete..."
