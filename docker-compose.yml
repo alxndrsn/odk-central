@@ -17,8 +17,7 @@ services:
       POSTGRES_DB: odk
     restart: always
     depends_on:
-      postgres:
-        condition: service_completed_successfully
+      - postgres
   postgres:
     # This service upgrades from postgres 9.6 to 14.
     # The legacy name must be maintained to allow access to the anonymous volume.
