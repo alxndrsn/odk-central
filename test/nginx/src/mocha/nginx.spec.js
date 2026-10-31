@@ -48,8 +48,8 @@ const contentSecurityPolicies = {
         reportSample,
         none,
       ],
-      'form-action': none,
-      'frame-ancestors': none,
+      'form-action': self,
+      'frame-ancestors': self,
       'img-src': 'http://odk-nginx.example.test/favicon.ico', // http: scheme permits secure upgrade to https://
       'report-uri':  '/csp-report',
     },

@@ -19,7 +19,8 @@ Releasing requires two people: one person to push PRs and complete other tasks a
 ## Steps
 
 - [ ] Decide the release version (`vXXXX.X.Y`). The same version is used for `central`, `central-backend`, and `central-frontend`, so the `central` release URL (`https://github.com/getodk/central/releases/tag/vXXXX.X.Y`) can be referenced from the `central-frontend` and `central-backend` release bodies.
-- [ ] Write an announcement about the release for the forum.
+- [ ] List all the issues in `central` and `web-forms` repos to be included in this release, and tick them off when they have been cherry-picked into the release branch
+  - [ ] {{ first issue }}
 
 ### Get the repository
 
@@ -92,12 +93,15 @@ Releasing requires two people: one person to push PRs and complete other tasks a
   For a detailed list of technical updates, fixes, and improvements, please review the specific changelogs below:
 
   <!-- CHANGELOG section anchors drop dots from the version number: 0.25.0 → #0250 -->
-  * [back-end](https://github.com/getodk/central-backend/blob/master/docs/api.yaml)
-  * [apps/central](https://github.com/getodk/central-frontend/tree/master/apps/central/CHANGELOG.md#<version-without-dots>)
-  * [apps/forms](https://github.com/getodk/central-frontend/tree/master/apps/forms/CHANGELOG.md#<version-without-dots>)
-  * [packages/web-forms](https://github.com/getodk/central-frontend/blob/master/packages/web-forms/CHANGELOG.md#<version-without-dots>)
-  * [packages/xforms-engine](https://github.com/getodk/central-frontend/blob/master/packages/xforms-engine/CHANGELOG.md#<version-without-dots>)
-  * [packages/xpath](https://github.com/getodk/central-frontend/tree/master/packages/xpath/CHANGELOG.md#<version-without-dots>)
+  * User interface
+    * The user interface is made up of multiple component parts; each has its own changelog.
+    * [apps/central](https://github.com/getodk/central-frontend/tree/master/apps/central/CHANGELOG.md#<version-without-dots>)
+    * [apps/forms](https://github.com/getodk/central-frontend/tree/master/apps/forms/CHANGELOG.md#<version-without-dots>)
+    * [packages/web-forms](https://github.com/getodk/central-frontend/blob/master/packages/web-forms/CHANGELOG.md#<version-without-dots>)
+    * [packages/xforms-engine](https://github.com/getodk/central-frontend/blob/master/packages/xforms-engine/CHANGELOG.md#<version-without-dots>)
+    * [packages/xpath](https://github.com/getodk/central-frontend/tree/master/packages/xpath/CHANGELOG.md#<version-without-dots>)
+  * [API](https://docs.getodk.org/central-api-changelog/)
+  * [Operations infrastructure](https://github.com/getodk/central/blob/master/CHANGELOG.md#<version-without-dots>)
   ```
 
   </details>
