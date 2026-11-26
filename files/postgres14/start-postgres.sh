@@ -2,7 +2,7 @@
 set -o pipefail
 shopt -s inherit_errexit
 
-flag_upgradeCompletedOk="/postgres14-upgrade/upgrade-successful"
+flag_upgradeCompletedOk="$PGDATA/../.postgres14-upgrade-successful"
 
 logPrefix="$(date +%s%N)|$(basename "$0")"
 log() {
