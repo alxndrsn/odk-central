@@ -2,6 +2,7 @@
 set -o pipefail
 shopt -s inherit_errexit
 
+flag_upgradeCompletedOk="$PGDATANEW/../.postgres14-upgrade-successful"
 flag_deleteOldData_name="delete-old-data"
 flag_deleteOldData_internal="/postgres14-upgrade/$flag_deleteOldData_name"
 flag_oldDataDeleted="/postgres14-upgrade/old-data-deleted"
@@ -12,7 +13,7 @@ log() {
 }
 
 log "Checking for existing upgrade marker file..."
-if [[ -f "/postgres14-upgrade/upgrade-successful" ]]; then
+if [[ -f "$flag_upgradeCompletedOk" ]]; then
   log "Upgrade has been run previously."
 
   if [[ -f "$flag_deleteOldData_internal" ]]; then
@@ -96,6 +97,7 @@ else
     log "Upgrade complete."
   ) > >(tee --append "/postgres14-upgrade/upgrade-postgres.log" >&2) 2>&1
   fi
+  touch "$flag_upgradeCompletedOk"
   touch "/postgres14-upgrade/upgrade-successful"
 fi
 
