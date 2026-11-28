@@ -31,6 +31,7 @@ fi
 
 # If a previous run of postgres had a messy shutdown, it may have left a stale
 # PID file.  Remove here to prevent pgautoupgrade stalling.
+# See: https://github.com/pgautoupgrade/docker-pgautoupgrade/issues/304
 rm -f "$PGDATA/postmaster.pid"
 
 log "Starting postgres..."
