@@ -29,6 +29,10 @@ if  ! [[ -f "$flag_upgradedOk_data" ]] &&
   log "Upgrade to v14 complete."
 fi
 
+# If a previous run of postgres had a messy shutdown, it may have left a stale
+# PID file.  Remove here to prevent pgautoupgrade stalling.
+rm -f "$PGDATA/postmaster.pid"
+
 log "Starting postgres..."
 # call ENTRYPOINT + CMD from parent Docker image
 exec /usr/local/bin/docker-entrypoint.sh postgres "$@"
